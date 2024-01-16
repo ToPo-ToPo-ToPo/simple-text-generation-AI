@@ -80,7 +80,7 @@ def training(tokenizer, model, train_dataset):
         tokenizer=tokenizer,
         train_dataset=train_dataset,
         dataset_text_field="text",
-        max_seq_length=512,
+        max_seq_length=128,
     )
     
     # 学習の実行
