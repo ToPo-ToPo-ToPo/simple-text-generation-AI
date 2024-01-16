@@ -103,7 +103,7 @@ if __name__ == '__main__':
     train_dataset = create_train_dataset()
     
     # トレーニングを行う
-    #trainer = training(tokenizer=tokenizer, model=model, train_dataset=train_dataset)
+    trainer = training(tokenizer=tokenizer, model=model, train_dataset=train_dataset)
     
     # モデルの保存
-    #trainer.save_model("../models/open-calm-small-multilingual-sentiments-japanese-positive")
+    trainer.save_model("../models/open-calm-small-multilingual-sentiments-japanese-positive")
