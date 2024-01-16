@@ -4,7 +4,7 @@ sys.path.append('../src/')
 
 # モデルのキャッシュパスの変更
 import os
-os.environ['TRANSFORMERS_CACHE'] = '../models/cache/'
+os.environ['HF_HOME'] = '../cache/'
 
 import torch
 from llm.model_factory import ModelFactory
