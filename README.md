@@ -53,5 +53,5 @@ source .\env\Scripts\activate
 - Hugging Faceのダウンロードされたモデルのcacheは，models/cache/に保存されます．非常に容量が大きいため，PCの容量が問題なった場合は，このcacheを消去してください．
 
 ## ライセンス
-This project is released under the MIT License, see LICENSE file.
+This project is released under the MIT License, see LICENSE file. However portions of the project are available under separate license terms: Pytorch is licensed under the BSD license.
 
