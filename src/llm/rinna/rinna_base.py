@@ -10,13 +10,19 @@ class RinnaBase:
     #----------------------------------------------------------
     # コンストラクタ
     #----------------------------------------------------------
-    def __init__(self, model_name, processor, load_bit_size, load_in_8bit=False):
+    def __init__(self, model_name, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False):
 
         #
         self.tokenizer = T5Tokenizer.from_pretrained(model_name, use_fast=False)
         
         # モデルの設定
-        self.model = AutoModelForCausalLM.from_pretrained(model_name, device_map=processor, torch_dtype=load_bit_size, load_in_8bit=load_in_8bit)
+        self.model = AutoModelForCausalLM.from_pretrained(
+            model_name, 
+            device_map=processor, 
+            torch_dtype=load_bit_size, 
+            load_in_8bit=load_in_8bit,
+            load_in_4bit=load_in_4bit
+        )
     
     #----------------------------------------------------------
     # プロンプトの設定
@@ -72,13 +78,20 @@ class RinnaPpo3_6b(RinnaBase):
     #----------------------------------------------------------
     # コンストラクタ
     #----------------------------------------------------------
-    def __init__(self, processor, load_bit_size, load_in_8bit=False):
+    def __init__(self, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False):
 
         # モデル名の設定
         MODEL_NAME = "rinna/japanese-gpt-neox-3.6b-instruction-ppo"
 
         # スーパークラスのコンストラクタを適用
-        super(RinnaPpo3_6b, self).__init__(model_name=MODEL_NAME, processor=processor, load_bit_size=load_bit_size, load_in_8bit=load_in_8bit)
+        super(RinnaPpo3_6b, self).__init__(
+            model_name=MODEL_NAME, 
+            processor=processor, 
+            load_bit_size=load_bit_size, 
+            load_in_8bit=load_in_8bit,
+            load_in_4bit=load_in_4bit
+        )
+
 #====================================================================
 # rinna sft モデルを定義するクラス
 #====================================================================
@@ -87,13 +100,19 @@ class RinnaSft3_6b(RinnaBase):
     #----------------------------------------------------------
     # コンストラクタ
     #----------------------------------------------------------
-    def __init__(self, processor, load_bit_size, load_in_8bit=False):
+    def __init__(self, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False):
 
         # モデル名の設定
         MODEL_NAME = "rinna/japanese-gpt-neox-3.6b-instruction-sft"
 
         # スーパークラスのコンストラクタを適用
-        super(RinnaSft3_6b, self).__init__(model_name=MODEL_NAME, processor=processor, load_bit_size=load_bit_size, load_in_8bit=load_in_8bit)
+        super(RinnaSft3_6b, self).__init__(
+            model_name=MODEL_NAME, 
+            processor=processor, 
+            load_bit_size=load_bit_size, 
+            load_in_8bit=load_in_8bit,
+            load_in_4bit=load_in_4bit
+        )
 
 #====================================================================
 # rinna sft v2モデルを定義するクラス
@@ -103,12 +122,18 @@ class RinnaSftV2_3_6b(RinnaBase):
     #----------------------------------------------------------
     # コンストラクタ
     #----------------------------------------------------------
-    def __init__(self, processor, load_bit_size, load_in_8bit=False):
+    def __init__(self, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False):
 
         # モデル名の設定
         MODEL_NAME = "rinna/japanese-gpt-neox-3.6b-instruction-sft-v2"
 
         # スーパークラスのコンストラクタを適用
-        super(RinnaSftV2_3_6b, self).__init__(model_name=MODEL_NAME, processor=processor, load_bit_size=load_bit_size, load_in_8bit=load_in_8bit)
+        super(RinnaSftV2_3_6b, self).__init__(
+            model_name=MODEL_NAME, 
+            processor=processor, 
+            load_bit_size=load_bit_size, 
+            load_in_8bit=load_in_8bit,
+            load_in_4bit=load_in_4bit
+        )
 
 

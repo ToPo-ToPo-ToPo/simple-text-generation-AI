@@ -53,7 +53,8 @@ LOAD_BIT_SIZE_LIST = [
     "float32", 
     "bfloat16", 
     "float16", 
-    "float16 (load_in_8bit)"
+    "load_in_8bit",
+    "load_in_4bit"
 ]
 LOAD_BIT_SIZE_LIST_CPU = [
     "float32", 

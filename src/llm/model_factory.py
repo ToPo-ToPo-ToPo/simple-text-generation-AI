@@ -17,26 +17,58 @@ class ModelFactory:
     #----------------------------------------------------------
     # LLMのモデルを生成し、返す
     #----------------------------------------------------------
-    def create(self, name, processor, load_bit_size, load_in_8bit=False):
+    def create(self, name, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False, llm_int8_enable_fp32_cpu_offload=False):
         
         # 入力されたmodel名からLLMを作成する
         if name == "rinna/japanese-gpt-neox-3.6b-instruction-ppo":
-            return RinnaPpo3_6b(processor=processor, load_bit_size=load_bit_size, load_in_8bit=load_in_8bit)
+            return RinnaPpo3_6b(
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit
+            )
         
         elif name == "rinna/japanese-gpt-neox-3.6b-instruction-sft-v2":
-            return RinnaSftV2_3_6b(processor=processor, load_bit_size=load_bit_size, load_in_8bit=load_in_8bit)
+            return RinnaSftV2_3_6b(
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit
+            )
         
         elif name == "rinna/japanese-gpt-neox-3.6b-instruction-sft":
-            return RinnaSft3_6b(processor=processor, load_bit_size=load_bit_size, load_in_8bit=load_in_8bit)
+            return RinnaSft3_6b(
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit
+            )
         
         elif name == "line-corporation/japanese-large-lm-3.6b-instruction-sft":
-            return LineSft3_6b(processor=processor, load_bit_size=load_bit_size, load_in_8bit=load_in_8bit)
+            return LineSft3_6b(
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit
+            )
         
         elif name == "cyberagent/calm2-7b-chat":
-            return Calm2_7b_Chat(processor=processor, load_bit_size=load_bit_size, load_in_8bit=load_in_8bit)
+            return Calm2_7b_Chat(
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit, 
+                llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload
+            )
         
         elif name == "ToPo-ToPo/my-lora-aituber-model-based-line-3.6b-sft-v2":
-            return AituberMalBase(processor=processor, load_bit_size=load_bit_size, load_in_8bit=load_in_8bit)
+            return AituberMalBase(
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit
+            )
+        
         else:
             print("エラー: 不明なモデル名が入力されました。再確認してください。")
             exit(1)

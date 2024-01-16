@@ -162,22 +162,29 @@ class ChatBotGradioUi():
     #-----------------------------------------------------------
     def set_model(self, model_choice, processor_choice, load_bit_size_choice):
         
+        # データの初期化
+        load_in_8bit = False
+        load_in_4bit = False
+        llm_int8_enable_fp32_cpu_offload=False
+
         # bitサイズの設定
         if load_bit_size_choice == "float32":
             load_bit_size = torch.float32
-            load_in_8bit = False
         
         elif load_bit_size_choice == "bfloat16":
             load_bit_size = torch.bfloat16
-            load_in_8bit = False
         
         elif load_bit_size_choice == "float16":
             load_bit_size = torch.float16
-            load_in_8bit = False
         
-        elif load_bit_size_choice == "float16 (load_in_8bit)":
-            load_bit_size = torch.float16
+        elif load_bit_size_choice == "load_in_8bit":
+            load_bit_size = torch.float32
             load_in_8bit = True
+            llm_int8_enable_fp32_cpu_offload=True
+
+        elif load_bit_size_choice == "load_in_4bit":
+            load_bit_size = torch.float32
+            load_in_4bit = True
         
         else:
             self.info += "The loading bit size is not set up. Please check again.\n"
@@ -205,7 +212,14 @@ class ChatBotGradioUi():
     
             # llmの具体的な設定
             model_factory = ModelFactory()
-            self.llm = model_factory.create(name=model_choice, processor=processor_choice, load_bit_size=load_bit_size, load_in_8bit=load_in_8bit)
+            self.llm = model_factory.create(
+                name=model_choice, 
+                processor=processor_choice, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit,
+                load_in_4bit=load_in_4bit,
+                llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload
+            )
 
             # 表示する情報を作成
             self.info += "Model loading is complete. Let's start a conversation.\n"
