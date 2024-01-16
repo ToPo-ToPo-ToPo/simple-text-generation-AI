@@ -2,5 +2,6 @@ env/*
 *.pyc
 .python-version
 launch.json
-models/cache/*
+cache/hub/*
+cache/datasets/*
 offload_folder/*
