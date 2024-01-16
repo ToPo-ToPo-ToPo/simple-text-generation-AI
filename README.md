@@ -38,7 +38,7 @@ pip install -r requirements_apple_silicon.txt
 ```
 
 ## 使用方法
-ターミナル起動直後は，仮想環境が起動していないため，最初にパッケージ直下のディレクトリにて，次を実行する必要があります．  
+1. ターミナル起動直後は，仮想環境が起動していないため，最初にパッケージ直下のディレクトリにて，次を実行する必要があります．  
 - Windowsの場合は，以下の通りです．
 ```
 .\env\Scripts\activate
@@ -46,6 +46,13 @@ pip install -r requirements_apple_silicon.txt
 - Macの場合は，以下の通りです．
 ```
 source .\env\Scripts\activate
+```
+2. mainのディレクトリへ移動し，以下のプログラムを実行します．うまく起動できれば，使用するモデルの条件設定画面が表示されますので，指示通り条件設定をしてください．
+```
+cd main
+```
+```
+python gradio_main.py
 ```
 
 ## その他補足
