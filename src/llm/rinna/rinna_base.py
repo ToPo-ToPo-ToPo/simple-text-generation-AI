@@ -2,7 +2,6 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import T5Tokenizer
-import platform
 #====================================================================
 # rinnaのベースを管理するクラス
 #====================================================================
@@ -17,10 +16,7 @@ class RinnaBase:
         self.tokenizer = T5Tokenizer.from_pretrained(model_name, use_fast=False)
         
         # モデルの設定
-        self.model = AutoModelForCausalLM.from_pretrained(model_name, torch_dtype=load_bit_size, load_in_8bit=load_in_8bit).to(processor)
-        
-        # GPU or CPUのどちらを使用するか設定
-        #self.model = self.model.to(processor)
+        self.model = AutoModelForCausalLM.from_pretrained(model_name, device_map=processor, torch_dtype=load_bit_size, load_in_8bit=load_in_8bit)
     
     #----------------------------------------------------------
     # プロンプトの設定

@@ -4,7 +4,7 @@ import time
 import torch
 import gradio as gr
 from llm.model_factory import ModelFactory
-from UI.config import MODEL_LIST, PROCESSOR_LIST, LOAD_BIT_SIZE_LIST, LOAD_BIT_SIZE_LIST_MPS
+from UI.config import MODEL_LIST, PROCESSOR_LIST, LOAD_BIT_SIZE_LIST, LOAD_BIT_SIZE_LIST_MPS, LOAD_BIT_SIZE_LIST_CPU
 #======================================================================
 # UIの基本クラス
 #======================================================================
@@ -133,7 +133,7 @@ class ChatBotGradioUi():
         #-----------------------------------------------------------
         @processor_choice.change(inputs=processor_choice, outputs=load_bit_size_choice)
         def update_bit_size_radio(processor_choice):
-            
+
             if processor_choice == "cuda":
                 return gr.Radio(choices=LOAD_BIT_SIZE_LIST, interactive=True)
             
@@ -141,7 +141,14 @@ class ChatBotGradioUi():
                 return gr.Radio(choices=LOAD_BIT_SIZE_LIST_MPS, interactive=True)
             
             elif processor_choice == "cpu":
-                return gr.Radio(choices=LOAD_BIT_SIZE_LIST, interactive=True)
+                return gr.Radio(choices=LOAD_BIT_SIZE_LIST_CPU, interactive=True)
+            
+            elif processor_choice == "auto":
+                 pf = platform.system()
+                 if pf == 'Darwin':
+                     return gr.Radio(choices=LOAD_BIT_SIZE_LIST_MPS, interactive=True)
+                 else:
+                     return gr.Radio(choices=LOAD_BIT_SIZE_LIST, interactive=True)
             
             else:
                 return gr.Radio(interactive=False)
@@ -168,8 +175,8 @@ class ChatBotGradioUi():
             load_bit_size = torch.float16
             load_in_8bit = False
         
-        elif load_bit_size_choice == "int8":
-            load_bit_size = torch.int8
+        elif load_bit_size_choice == "float16 (load_in_8bit)":
+            load_bit_size = torch.float16
             load_in_8bit = True
         
         else:
@@ -190,7 +197,7 @@ class ChatBotGradioUi():
             self.info += "---------------------------------------------------------\n"
             self.info += "Model: " + model_choice + "\n"
             self.info += "Processor: " + processor_choice + "\n"
-            self.info += "Load bit size: " + str(load_bit_size) + "\n\n"
+            self.info += "Load bit size: " + load_bit_size_choice + "\n\n"
             self.info += "The model is now loading. Please wait a moment.....\n"
         
             # 設定されたモデルの情報を表示

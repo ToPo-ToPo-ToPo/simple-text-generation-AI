@@ -21,7 +21,7 @@ class AituberMalBase:
         self.tokenizer = T5Tokenizer.from_pretrained(MODEL_NAME, use_fast=False)
         
         # モデルの設定
-        self.model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=load_bit_size, load_in_8bit=load_in_8bit).to(processor)
+        self.model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, device_map=processor, torch_dtype=load_bit_size, load_in_8bit=load_in_8bit)
     
     #----------------------------------------------------------
     # プロンプトの設定

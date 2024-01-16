@@ -24,22 +24,26 @@ PROCESSOR_LIST = []
 if pf == 'Darwin':
     if torch.backends.mps.is_available():
         PROCESSOR_LIST = [
+            "auto",
             "mps", 
             "cpu"
         ]
     else:
         PROCESSOR_LIST = [
+            "auto"
             "cpu"
         ]
 # Windows or Linuxの場合
 else:
     if torch.cuda.is_available():
         PROCESSOR_LIST = [
+            "auto",
             "cuda", 
             "cpu"
         ]
     else:
         PROCESSOR_LIST = [
+            "auto",
             "cpu"
         ]
 #======================================================================
@@ -49,7 +53,12 @@ LOAD_BIT_SIZE_LIST = [
     "float32", 
     "bfloat16", 
     "float16", 
-    "int8"
+    "float16 (load_in_8bit)"
+]
+LOAD_BIT_SIZE_LIST_CPU = [
+    "float32", 
+    "bfloat16", 
+    "float16"
 ]
 LOAD_BIT_SIZE_LIST_MPS = [
     "float32", 

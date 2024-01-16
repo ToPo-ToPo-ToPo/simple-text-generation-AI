@@ -19,7 +19,7 @@ class Calm2_7b_Chat:
         self.tokenizer = AutoTokenizer.from_pretrained(MODEL_NAME)
         
         # モデルの設定
-        self.model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=load_bit_size, load_in_8bit=load_in_8bit).to(processor)
+        self.model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, device_map=processor, torch_dtype=load_bit_size, load_in_8bit=load_in_8bit)
     
     #----------------------------------------------------------
     # プロンプトの設定

@@ -2,7 +2,6 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import T5Tokenizer
-import platform
 #====================================================================
 # lineのベースを管理するクラス
 #====================================================================
@@ -20,7 +19,7 @@ class LineSft3_6b:
         self.tokenizer = T5Tokenizer.from_pretrained(MODEL_NAME, use_fast=False)
         
         # モデルの設定
-        self.model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, torch_dtype=load_bit_size, load_in_8bit=load_in_8bit).to(processor)
+        self.model = AutoModelForCausalLM.from_pretrained(MODEL_NAME, device_map=processor, torch_dtype=load_bit_size, load_in_8bit=load_in_8bit)
 
     #----------------------------------------------------------
     # プロンプトの設定
