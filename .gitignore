@@ -3,3 +3,4 @@ env/*
 .python-version
 launch.json
 models/cache/*
+offload_folder/*

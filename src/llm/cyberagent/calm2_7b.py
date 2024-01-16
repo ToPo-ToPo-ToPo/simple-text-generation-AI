@@ -47,7 +47,7 @@ class Calm2_7b_Chat:
     #----------------------------------------------------------
     def response(self, prompt=None):
 
-        token_ids = self.tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
+        token_ids = self.tokenizer.encode(prompt, add_special_tokens=True, return_tensors="pt")
 
         with torch.no_grad():
             output_ids = self.model.generate(
@@ -62,5 +62,6 @@ class Calm2_7b_Chat:
             )
 
         output = self.tokenizer.decode(output_ids.tolist()[0][token_ids.size(1):])
+        output = output.replace("<|endoftext|>", "")
 
         return output

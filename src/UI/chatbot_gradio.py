@@ -178,12 +178,12 @@ class ChatBotGradioUi():
             load_bit_size = torch.float16
         
         elif load_bit_size_choice == "load_in_8bit":
-            load_bit_size = torch.float32
+            load_bit_size = torch.float16
             load_in_8bit = True
             llm_int8_enable_fp32_cpu_offload=True
 
         elif load_bit_size_choice == "load_in_4bit":
-            load_bit_size = torch.float32
+            load_bit_size = torch.float16
             load_in_4bit = True
         
         else:
