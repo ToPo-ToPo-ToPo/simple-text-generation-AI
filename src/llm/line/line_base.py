@@ -10,17 +10,14 @@ class LineSft3_6b:
     #----------------------------------------------------------
     # コンストラクタ
     #----------------------------------------------------------
-    def __init__(self, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False):
-
-        # モデル名の設定
-        MODEL_NAME = "line-corporation/japanese-large-lm-3.6b-instruction-sft"
+    def __init__(self, model_name, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False):
 
         #
-        self.tokenizer = T5Tokenizer.from_pretrained(MODEL_NAME, use_fast=False)
+        self.tokenizer = T5Tokenizer.from_pretrained(pretrained_model_name_or_path=model_name, use_fast=False)
         
         # モデルの設定
         self.model = AutoModelForCausalLM.from_pretrained(
-            MODEL_NAME, 
+            pretrained_model_name_or_path=model_name, 
             device_map=processor, 
             torch_dtype=load_bit_size, 
             load_in_8bit=load_in_8bit,

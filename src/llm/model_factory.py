@@ -31,6 +31,7 @@ class ModelFactory:
         
         elif name == "line-corporation/japanese-large-lm-3.6b-instruction-sft":
             return LineSft3_6b(
+                model_name=name,
                 processor=processor, 
                 load_bit_size=load_bit_size, 
                 load_in_8bit=load_in_8bit, 
@@ -39,6 +40,7 @@ class ModelFactory:
         
         elif name == "cyberagent/calm2-7b-chat":
             return Calm2_7b_Chat(
+                model_name=name,
                 processor=processor, 
                 load_bit_size=load_bit_size, 
                 load_in_8bit=load_in_8bit, 
@@ -48,6 +50,7 @@ class ModelFactory:
         
         elif name == "ToPo-ToPo/my-lora-aituber-model-based-line-3.6b-sft-v2":
             return AituberMalBase(
+                model_name=name,
                 processor=processor, 
                 load_bit_size=load_bit_size, 
                 load_in_8bit=load_in_8bit, 
