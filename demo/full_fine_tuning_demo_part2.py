@@ -92,7 +92,7 @@ def create_train_dataset():
 def training(tokenizer, model, train_dataset):
 
     args = TrainingArguments(
-        output_dir="../train_log"
+        output_dir="../temp/train_log"
     ) 
 
     # トレーナーの作成
@@ -100,7 +100,7 @@ def training(tokenizer, model, train_dataset):
         model=model,
         tokenizer=tokenizer,
         train_dataset=train_dataset,
-        max_seq_length=64,
+        max_seq_length=128,
         formatting_func=formatting_prompts_func,
         args=args
     )

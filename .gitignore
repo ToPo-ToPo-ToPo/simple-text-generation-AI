@@ -6,3 +6,4 @@ cache/hub/*
 cache/datasets/*
 models/*
 offload_folder/*
+temp/*
