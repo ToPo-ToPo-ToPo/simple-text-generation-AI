@@ -30,7 +30,7 @@ class Calm2_7b_Chat:
             load_in_8bit=load_in_8bit,
             load_in_4bit=load_in_4bit, 
             quantization_config=quantization_config,
-            offload_folder="../offload_folder"
+            offload_folder="../temp/offload_folder"
         )
     
     #----------------------------------------------------------
