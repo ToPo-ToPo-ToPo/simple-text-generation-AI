@@ -2,7 +2,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import BitsAndBytesConfig
-from prompt import PromptInstructionTuningModel
+from llm.cyberagent.prompt import PromptInstructionTuningModel
 #====================================================================
 # lineのベースを管理するクラス
 #====================================================================
@@ -16,19 +16,31 @@ class Calm2_7b_Chat:
         #
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=model_name)
 
-        # 量子化に関する設定
-        quantization_config = BitsAndBytesConfig(llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload)
+        # 量子化を使用する場合
+        if load_in_8bit == True or load_in_4bit == True:
+            # 量子化に関する設定
+            quantization_config = BitsAndBytesConfig(llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload)
 
-        # モデルの設定
-        self.model = AutoModelForCausalLM.from_pretrained(
-            pretrained_model_name_or_path=model_name, 
-            device_map=processor, 
-            torch_dtype=load_bit_size, 
-            load_in_8bit=load_in_8bit,
-            load_in_4bit=load_in_4bit, 
-            quantization_config=quantization_config,
-            offload_folder="../temp/offload_folder"
-        )
+            # モデルの設定
+            self.model = AutoModelForCausalLM.from_pretrained(
+                pretrained_model_name_or_path=model_name, 
+                device_map=processor, 
+                torch_dtype=load_bit_size, 
+                load_in_8bit=load_in_8bit,
+                load_in_4bit=load_in_4bit, 
+                quantization_config=quantization_config,
+                offload_folder="../temp/offload_folder"
+            )
+        # 量子化を使用しない場合
+        else:
+            # モデルの設定
+            self.model = AutoModelForCausalLM.from_pretrained(
+                pretrained_model_name_or_path=model_name, 
+                device_map=processor, 
+                torch_dtype=load_bit_size, 
+                offload_folder="../temp/offload_folder"
+            )
+            
         
         # プロンプトの設定
         self.prompt = PromptInstructionTuningModel()

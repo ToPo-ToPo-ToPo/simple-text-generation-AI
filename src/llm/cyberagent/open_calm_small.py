@@ -1,7 +1,7 @@
 
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
-from prompt import PromptBaseModel
+from llm.cyberagent.prompt import PromptBaseModel
 #====================================================================
 # Modelの挙動を管理するクラス
 #====================================================================
