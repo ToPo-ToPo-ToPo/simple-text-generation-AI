@@ -36,7 +36,7 @@ def prompt_check(tokenizer, model, prompt):
         with torch.no_grad():
             tokens = model.generate(
                 **inputs,
-                max_new_tokens=64,
+                max_new_tokens=256,
                 do_sample=True,
                 temperature=0.7,
                 top_p=0.9,
@@ -58,7 +58,7 @@ if __name__ == '__main__':
     tokenizer, model = load_model()
 
     # プロンプトを設定する
-    question = "日本の首都は?"
+    question = "日本のおすすめの観光地は？"
     prompt = f"USER: {question}\nASSISTANT: "
     
     # プロンプトの状態を試す
