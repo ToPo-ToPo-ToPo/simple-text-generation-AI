@@ -1,6 +1,7 @@
 
 from llm.rinna.rinna_gpt_neox_3b import RinnaGptNeox3b
 from llm.line.line_base import LineSft3_6b
+from llm.cyberagent.open_calm_small import OpenCalmSmall
 from llm.cyberagent.calm2_7b import Calm2_7b_Chat
 from llm.aituber_mal.aituber_mal_base import AituberMalBase
 #====================================================================
@@ -38,6 +39,16 @@ class ModelFactory:
                 load_in_4bit=load_in_4bit
             )
         
+        elif name == "cyberagent/open-calm-small":
+            return OpenCalmSmall(
+                model_name=name,
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit, 
+                llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload
+            )
+
         elif name == "cyberagent/calm2-7b-chat":
             return Calm2_7b_Chat(
                 model_name=name,

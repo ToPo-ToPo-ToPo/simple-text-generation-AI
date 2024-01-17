@@ -9,7 +9,8 @@ MODEL_LIST = [
     "rinna/japanese-gpt-neox-3.6b-instruction-sft-v2",
     "rinna/japanese-gpt-neox-3.6b-instruction-sft",
     "line-corporation/japanese-large-lm-3.6b-instruction-sft",
-    "line-corporation/japanese-large-lm-3.6b-instruction-sft-4bit-128g-actorder_False", 
+    "line-corporation/japanese-large-lm-3.6b-instruction-sft-4bit-128g-actorder_False",
+    "cyberagent/open-calm-small", 
     "cyberagent/calm2-7b-chat", 
     "ToPo-ToPo/my-lora-aituber-model-based-line-3.6b-sft-v2",
 ]
