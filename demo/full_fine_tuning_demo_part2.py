@@ -4,7 +4,7 @@ import os
 os.environ['HF_HOME'] = '../cache/'
 
 import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer, TrainingArguments
 from datasets import load_dataset
 from trl import SFTTrainer
 #======================================================================
@@ -15,11 +15,13 @@ def load_model():
     # トークナイザーの準備
     tokenizer = AutoTokenizer.from_pretrained(
         "cyberagent/open-calm-small"
+        #"../models/open-calm-small-multilingual-sentiments-japanese-positive"
     ) 
     
     # モデルの準備
     model = AutoModelForCausalLM.from_pretrained(
         "cyberagent/open-calm-small", 
+        #"../models/open-calm-small-multilingual-sentiments-japanese-positive",
         device_map="auto"
     )
     
@@ -88,14 +90,19 @@ def create_train_dataset():
 # フルファインチューニングを行う
 #======================================================================
 def training(tokenizer, model, train_dataset):
-    
+
+    args = TrainingArguments(
+        output_dir="../train_log"
+    ) 
+
     # トレーナーの作成
     trainer = SFTTrainer(
         model=model,
         tokenizer=tokenizer,
         train_dataset=train_dataset,
-        max_seq_length=128,
-        formatting_func=formatting_prompts_func
+        max_seq_length=64,
+        formatting_func=formatting_prompts_func,
+        args=args
     )
     
     # 学習の実行
