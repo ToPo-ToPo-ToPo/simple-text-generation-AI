@@ -1,8 +1,9 @@
 
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
+from prompt import PromptBaseModel
 #====================================================================
-# lineのベースを管理するクラス
+# Modelの挙動を管理するクラス
 #====================================================================
 class OpenCalmSmall:
 
@@ -23,13 +24,16 @@ class OpenCalmSmall:
             load_in_4bit=load_in_4bit, 
             offload_folder="../temp/offload_folder"
         )
+        
+        # プロンプトの設定
+        self.prompt = PromptBaseModel()
     
     #----------------------------------------------------------
     # プロンプトの設定
     #----------------------------------------------------------
     def generate_prompt(self, question=None):
 
-        prompt = f"{question}"
+        prompt = self.prompt.generate(question=question)
 
         return prompt
     

@@ -2,6 +2,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import BitsAndBytesConfig
+from prompt import PromptInstructionTuningModel
 #====================================================================
 # lineのベースを管理するクラス
 #====================================================================
@@ -28,13 +29,17 @@ class Calm2_7b_Chat:
             quantization_config=quantization_config,
             offload_folder="../temp/offload_folder"
         )
+        
+        # プロンプトの設定
+        self.prompt = PromptInstructionTuningModel()
     
     #----------------------------------------------------------
     # プロンプトの設定
     #----------------------------------------------------------
     def generate_prompt(self, question=None):
 
-        prompt = f"USER: {question}\nASSISTANT: "
+        #prompt = f"USER: {question}\nASSISTANT: "
+        prompt = self.prompt.generate(question=question)
 
         return prompt
     
