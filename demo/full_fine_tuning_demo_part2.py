@@ -14,14 +14,14 @@ def load_model():
     
     # トークナイザーの準備
     tokenizer = AutoTokenizer.from_pretrained(
-        "cyberagent/open-calm-small"
-        #"../models/open-calm-small-multilingual-sentiments-japanese-positive"
+        #"cyberagent/open-calm-small"
+        "../models/open-calm-small-multilingual-sentiments-japanese-positive"
     ) 
     
     # モデルの準備
     model = AutoModelForCausalLM.from_pretrained(
-        "cyberagent/open-calm-small", 
-        #"../models/open-calm-small-multilingual-sentiments-japanese-positive",
+        #"cyberagent/open-calm-small", 
+        "../models/open-calm-small-multilingual-sentiments-japanese-positive",
         device_map="auto"
     )
     
@@ -132,4 +132,4 @@ if __name__ == '__main__':
     trainer = training(tokenizer=tokenizer, model=model, train_dataset=train_dataset)
     
     # モデルの保存
-    trainer.save_model("../models/open-calm-small-databricks-dolly-15k-ja-stf")
+    trainer.save_model("../models/open-calm-small-positive-databricks-dolly-15k-ja-stf")

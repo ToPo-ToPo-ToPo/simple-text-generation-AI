@@ -14,12 +14,14 @@ def load_model():
     
     # トークナイザーの準備
     tokenizer = AutoTokenizer.from_pretrained(
-        "../models/open-calm-small-databricks-dolly-15k-ja-stf"
+        #"../models/open-calm-small-databricks-dolly-15k-ja-stf"
+        "../models/open-calm-small-positive-databricks-dolly-15k-ja-stf"
     ) 
     
     # モデルの準備
     model = AutoModelForCausalLM.from_pretrained(
-       "../models/open-calm-small-databricks-dolly-15k-ja-stf",
+       #"../models/open-calm-small-databricks-dolly-15k-ja-stf",
+       "../models/open-calm-small-positive-databricks-dolly-15k-ja-stf",
         device_map="auto"
     )
     
