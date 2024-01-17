@@ -4,6 +4,7 @@ import time
 import torch
 import gradio as gr
 from llm.model_factory import ModelFactory
+from training.full_fine_tuning import FullFineTuning
 from UI.config import MODEL_LIST, PROCESSOR_LIST, LOAD_BIT_SIZE_LIST, LOAD_BIT_SIZE_LIST_MPS, LOAD_BIT_SIZE_LIST_CPU
 #======================================================================
 # UIの基本クラス
@@ -19,6 +20,9 @@ class ChatBotGradioUi():
         # 言語モデル関係の変数を初期化
         self.llm = None
         self.info = ""
+        
+        self.train_method = None
+        self.train_dataset = None
         
         # UIの基本設定
         self.css = """footer {visibility: hidden}"""
@@ -80,7 +84,6 @@ class ChatBotGradioUi():
         with gr.Blocks(css=self.css) as self.demo:
             # LLM設定タブを定義
             with gr.Tab("Model"):
-                # 使用するllmの条件を設定
                 self.set_model_ui()
             
             # チャットボットのタブを定義
@@ -102,6 +105,10 @@ class ChatBotGradioUi():
                 # Enterをされた時の動作
                 # テキストボックスに何も表示されていない時は空文字が入力される
                 msg.submit(fn=self.user, inputs=[msg, chatbot], outputs=[msg, chatbot], queue=False).then(self.bot, chatbot, chatbot)
+
+            # ファインチューニング用のタブを定義
+            with gr.Tab("Training"):
+                self.set_train_ui()
 
     #-----------------------------------------------------------
     # 使用するモデルの登録のUI
@@ -227,3 +234,89 @@ class ChatBotGradioUi():
             # モデルの読み込み結果を表示
             yield gr.Textbox(visible=True, value=self.info)
     
+    #-----------------------------------------------------------
+    # 学習に関する情報登録のUI
+    #-----------------------------------------------------------
+    def set_train_ui(self):
+        
+        # UIの設定
+        with gr.Blocks() as demo:
+            with gr.Row():
+                with gr.Column():
+                    # 学習の種類を設定
+                    train_type_choice = gr.Radio(label="1. Training type", choices=["Base", "Instruction Tuning"], value=None)
+                    
+                    # 学習の方法を設定
+                    train_method_choice = gr.Radio(label="2. Training method", choices=["Full Fine Tuning", "LoRA"], value=None)
+                    
+                    # 学習用のデータセットの種類を選択
+                    datastes_choice = gr.Dropdown(label="3. Datasets", info="Please select the datasets.", choices=["dolly-15-k", "etc"], value=None)
+
+                # 初期状態のテキストボックスを配置
+                model_info_text = gr.Textbox(label="Train setting information", lines=10, interactive=True, show_copy_button=True)
+
+            # 学習情報を送信するボタンを配置
+            train_data_submit_btn = gr.Button("4. Train data submit")
+            
+            # 学習済みのモデル名を入力するテキストボックスを配置
+            trained_model_name_text = gr.Textbox(label="Trained model name", interactive=True, show_copy_button=True)
+            
+            # 学習を開始するボタンを配置
+            # 全ての設定が完了次第、反応するようにしたい
+            train_start_btn = gr.Button("5. Training Start", variant="primary")
+            
+        #　送信ボタンクリック時の動作を設定
+        train_data_submit_btn.click(fn=self.set_train_condition, inputs=[datastes_choice, train_type_choice, train_method_choice], outputs=model_info_text)
+        
+        #　送信ボタンクリック時の動作を設定
+        train_start_btn.click(fn=self.training, inputs=[trained_model_name_text], outputs=model_info_text)
+        
+        
+    #-----------------------------------------------------------
+    # 使用するモデルの登録
+    #-----------------------------------------------------------
+    def set_train_condition(self, datasets_choice, train_type_choice, train_method_choice):
+        
+        # 学習手法を設定
+        if train_method_choice == "Full Fine Tuning":
+            self.train_method = FullFineTuning(
+                tokenizer=self.llm.tokenizer, 
+                model=self.llm.model
+            )
+        
+        elif train_method_choice == "LoRA":
+            return "LoRAはまだ実装されていません"
+        
+        else:
+            return "学習手法が設定されていません"
+        
+        # 学習方式を設定
+        train_type = None
+        if train_type_choice == "Base":
+            pass
+        elif train_type_choice == "Instruction Tuning":
+            pass
+        else:
+            return "学習方式が設定されていません"
+        
+        # 学習用のデータセットを作成
+        self.train_dataset = self.train_method.create_train_dataset(dataset_name=datasets_choice)
+        
+        return "ボタンが押されました。"
+    
+    
+    #-----------------------------------------------------------
+    # 使用するモデルの登録
+    #-----------------------------------------------------------
+    def training(self, trained_model_name_text):
+        
+        # トレーニングを行う
+        self.trainer = self.train_method.training(
+            tokenizer=self.llm.tokenizer, 
+            model=self.llm.model, 
+            train_dataset=self.train_dataset
+        )
+    
+        # モデルの保存
+        save_name = "../models/" + trained_model_name_text
+        self.trainer.save_model("save_name")

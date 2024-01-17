@@ -50,7 +50,6 @@ class Calm2_7b_Chat:
     #----------------------------------------------------------
     def generate_prompt(self, question=None):
 
-        #prompt = f"USER: {question}\nASSISTANT: "
         prompt = self.prompt.generate(question=question)
 
         return prompt
