@@ -22,6 +22,7 @@ class ChatBotGradioUi():
         # 言語モデル関係の変数を初期化
         self.llm = None
         self.info = ""
+        self.train_info = ""
         
         self.train_method = None
         self.train_dataset = None
@@ -261,11 +262,11 @@ class ChatBotGradioUi():
             train_data_submit_btn = gr.Button("4. Train data submit")
             
             # 学習済みのモデル名を入力するテキストボックスを配置
-            trained_model_name_text = gr.Textbox(label="Trained model name", interactive=True, show_copy_button=True)
+            trained_model_name_text = gr.Textbox(label="5. Trained model name", interactive=True, show_copy_button=True)
             
             # 学習を開始するボタンを配置
             # 全ての設定が完了次第、反応するようにしたい
-            train_start_btn = gr.Button("5. Training Start", variant="primary")
+            train_start_btn = gr.Button("6. Training Start", variant="primary")
             
         #　送信ボタンクリック時の動作を設定
         train_data_submit_btn.click(fn=self.set_train_condition, inputs=[datastes_choice, train_type_choice, train_method_choice], outputs=model_info_text)
@@ -279,36 +280,48 @@ class ChatBotGradioUi():
     #-----------------------------------------------------------
     def set_train_condition(self, datasets_choice, train_type_choice, train_method_choice):
         
-        # 学習手法を設定
+        # 学習方法を設定
         if train_method_choice == "Full Fine Tuning":
-            self.train_method = FineTuning(
-                tokenizer=self.llm.tokenizer, 
-                model=self.llm.model
-            )
+            
+            if train_type_choice == "Base":
+                self.train_method = FineTuning(
+                    tokenizer=self.llm.tokenizer, 
+                    model=self.llm.model
+                )
+            
+            elif train_type_choice == "Instruction Tuning":
+                self.train_method = InstructionFineTuning(
+                    tokenizer=self.llm.tokenizer, 
+                    model=self.llm.model
+                )
+                
+                self.prompt_format = PromptInstructionTuningModel(
+                    user_tag="ユーザー:", 
+                    system_tag="システム:"
+                )
+
+            else:
+                return self.train_info + "学習方式が設定されていません"
         
         elif train_method_choice == "LoRA":
-            return "LoRAはまだ実装されていません"
+            return self.train_info + "LoRAはまだ実装されていません"
         
         else:
-            return "学習手法が設定されていません"
+            return self.train_info + "学習手法が設定されていません"
         
-        # 学習方式を設定
-        train_type = None
-        if train_type_choice == "Base":
-            pass
-        elif train_type_choice == "Instruction Tuning":
-            #train_type = InstructionFineTuning()
-            self.prompt_format = PromptInstructionTuningModel(
-                user_tag="ユーザー:", 
-                system_tag="システム:"
-            )
-        else:
-            return "学習方式が設定されていません"
+        self.train_info += "Training method: " + train_method_choice + "\n"
+        self.train_info += "Training type: " + train_type_choice + "\n"
+        self.train_info += "Datasets: " + datasets_choice + "\n"
+        yield gr.Textbox(visible=True, value=self.train_info)
+
+        self.train_info += "Creating a dataset for training. Please wait a moment.....\n"
+        yield gr.Textbox(visible=True, value=self.train_info)
         
         # 学習用のデータセットを作成
         self.train_dataset = self.train_method.create_train_dataset(dataset_name=datasets_choice)
         
-        return "ボタンが押されました。"
+        self.train_info += "The dataset for training is complete! The training can now begin!\n"
+        yield gr.Textbox(visible=True, value=self.train_info)
     
     
     #-----------------------------------------------------------
