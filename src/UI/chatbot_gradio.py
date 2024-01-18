@@ -8,7 +8,6 @@ from training.fine_tuning import FineTuning
 from training.instruction_fine_tuning import InstructionFineTuning
 from llm.prompt import PromptInstructionTuningModel
 from configure.model_config import MODEL_DICT
-from configure.processor_config import PROCESSOR_LIST
 from configure.load_bit_size_config import LOAD_BIT_SIZE_DICT
 #======================================================================
 # UIの基本クラス
@@ -132,7 +131,7 @@ class ChatBotGradioUi():
                     model_name_choice = gr.Dropdown(label="2. Model name", info="Please select the LLM name.", choices=[], value=None)
 
                     # 使用するアーキテクチャの設定
-                    processor_choice = gr.Radio(label="3. Processor type", choices=PROCESSOR_LIST, value=None)
+                    processor_choice = gr.Radio(label="3. Processor type", choices=list(LOAD_BIT_SIZE_DICT.keys()), value=None)
 
                     # モデルをロードする際のbitサイズの設定
                     load_bit_size_choice = gr.Radio(label="4. Load bit size", info="Select the bit size for model loading.", choices=list(LOAD_BIT_SIZE_DICT["auto"]))
@@ -163,24 +162,6 @@ class ChatBotGradioUi():
   
             return gr.Radio(choices=load_bit_size_list, value=load_bit_size_list[0], interactive=True)
 
-            """if processor_choice == "cuda":
-                return gr.Radio(choices=LOAD_BIT_SIZE["cuda"], interactive=True)
-            
-            elif processor_choice == "mps":
-                return gr.Radio(choices=LOAD_BIT_SIZE_LIST_MPS, interactive=True)
-            
-            elif processor_choice == "cpu":
-                return gr.Radio(choices=LOAD_BIT_SIZE_LIST_CPU, interactive=True)
-            
-            elif processor_choice == "auto":
-                 pf = platform.system()
-                 if pf == 'Darwin':
-                     return gr.Radio(choices=LOAD_BIT_SIZE_LIST_MPS, interactive=True)
-                 else:
-                     return gr.Radio(choices=LOAD_BIT_SIZE_LIST, interactive=True)
-            
-            else:
-                return gr.Radio(interactive=False)"""
 
         #　送信ボタンクリック時の動作を設定
         #　引数：model_name, processor_radio, load_bit_size_radioを関数set_model()に入力
