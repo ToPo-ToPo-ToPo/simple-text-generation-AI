@@ -13,6 +13,9 @@ class RinnaInstructionTuningModel:
     def __init__(self, model_name, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False):
 
         #
+        self.name = model_name
+
+        #
         self.tokenizer = T5Tokenizer.from_pretrained(
             pretrained_model_name_or_path=model_name, 
             use_fast=False

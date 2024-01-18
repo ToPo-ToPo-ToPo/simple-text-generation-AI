@@ -26,6 +26,7 @@ class ChatBotGradioUi():
         
         self.train_method = None
         self.train_dataset = None
+        self.trained_model_name = ""
         
         # UIの基本設定
         self.css = """footer {visibility: hidden}"""
@@ -260,10 +261,10 @@ class ChatBotGradioUi():
             with gr.Row():
                 with gr.Column():
                     # 学習の種類を設定
-                    train_type_choice = gr.Radio(label="1. Training type", choices=["Base", "Instruction Tuning"], value=None)
+                    train_type_choice = gr.Radio(label="1. Training type", choices=["base", "instruction-tuning"], value=None)
                     
                     # 学習の方法を設定
-                    train_method_choice = gr.Radio(label="2. Training method", choices=["Full Fine Tuning", "LoRA"], value=None)
+                    train_method_choice = gr.Radio(label="2. Training method", choices=["full", "LoRA"], value=None)
                     
                     # 学習用のデータセットの種類を選択
                     datastes_choice = gr.Dropdown(label="3. Datasets", info="Please select the datasets.", choices=["kunishou/databricks-dolly-15k-ja", "etc"], value=None)
@@ -294,13 +295,13 @@ class ChatBotGradioUi():
     def set_train_condition(self, datasets_choice, train_type_choice, train_method_choice):
         
         # 学習方法を設定
-        if train_method_choice == "Full Fine Tuning":
+        if train_method_choice == "full":
             
-            if train_type_choice == "Base":
+            if train_type_choice == "base":
                 # 学習方法を設定
                 self.train_method = FineTuning()
             
-            elif train_type_choice == "Instruction Tuning":
+            elif train_type_choice == "instruction-tuning":
                 # 学習方法を設定
                 self.train_method = InstructionFineTuning()
 
@@ -333,7 +334,14 @@ class ChatBotGradioUi():
         
         self.train_info += "The dataset for training is complete! The training can now begin!\n"
         yield gr.Textbox(visible=True, value=self.train_info)
-    
+
+        # 学習済みモデルのモデル名を自動生成
+        model_name = self.llm.name.replace('../models/', '')
+        model_name = model_name.replace('/', '-')
+        dataset_name = datasets_choice.replace('/', '-')
+        self.trained_model_name = model_name + "-" + dataset_name + "-" + train_method_choice + "-" + train_type_choice + "-" + "model"
+        self.train_info += self.trained_model_name + "\n"
+        yield gr.Textbox(visible=True, value=self.train_info)
     
     #-----------------------------------------------------------
     # 使用するモデルの登録
@@ -355,7 +363,7 @@ class ChatBotGradioUi():
         yield gr.Textbox(visible=True, value=self.train_info)
     
         # モデルの保存
-        save_name = "../models/" + trained_model_name_text
+        save_name = "../models/" + self.trained_model_name
         trainer.save_model(save_name)
 
         self.train_info += "The results of the training have been saved.\n"
