@@ -42,8 +42,11 @@ class PromptInstructionTuningModel:
     #----------------------------------------------------------
     def generate(self, question, input=""):
 
+        # 前置き(input)がない場合
         if input == "":
             prompt = f"{self.user_tag} {question}{self.new_line_tag}{self.system_tag} "
+        
+        # 前置き(input)がある場合
         else:
             prompt = f"{self.input_tag} {input}{self.new_line_tag}{self.user_tag} {question}{self.new_line_tag}{self.system_tag} "
         
@@ -57,7 +60,9 @@ class PromptInstructionTuningModel:
     def formatting_prompts_func(self, example):
         
         output_texts = []
+        
         for i in range(len(example['instruction'])):
+            
             # 前置き(input)がない場合
             if example['input'] == "":
                 text = f"{self.user_tag} {example['instruction'][i]}{self.new_line_tag}{self.system_tag} {example['output'][i]}{self.end_of_string}"
