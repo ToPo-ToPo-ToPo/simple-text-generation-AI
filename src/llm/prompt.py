@@ -8,7 +8,11 @@ class PromptBaseModel:
     # コンストラクタ
     #----------------------------------------------------------
     def __init__(self):
-        pass
+        self.input_tag = ""
+        self.user_tag = ""
+        self.system_tag = ""
+        self.new_line_tag = ""
+        self.end_of_string = ""
     
     #----------------------------------------------------------
     # 入力された文章の続きを生成するタイプ

@@ -1,6 +1,3 @@
-
-import platform
-import time
 import torch
 import gradio as gr
 from llm.model_factory import ModelFactory
@@ -9,6 +6,7 @@ from training.instruction_fine_tuning import InstructionFineTuning
 from llm.prompt import PromptInstructionTuningModel
 from configure.model_config import MODEL_DICT
 from configure.load_bit_size_config import LOAD_BIT_SIZE_DICT
+from configure.training_config import DATASETS_DICT
 #======================================================================
 # UIの基本クラス
 #======================================================================
@@ -91,6 +89,10 @@ class ChatBotGradioUi():
             with gr.Tab("Model"):
                 self.set_model_ui()
             
+            # ファインチューニング用のタブを定義
+            with gr.Tab("Training"):
+                self.set_train_ui()
+            
             # チャットボットのタブを定義
             with gr.Tab("Chat"):
                 chatbot = gr.Chatbot(
@@ -110,10 +112,6 @@ class ChatBotGradioUi():
                 # Enterをされた時の動作
                 # テキストボックスに何も表示されていない時は空文字が入力される
                 msg.submit(fn=self.user, inputs=[msg, chatbot], outputs=[msg, chatbot], queue=False).then(self.bot, chatbot, chatbot)
-
-            # ファインチューニング用のタブを定義
-            with gr.Tab("Training"):
-                self.set_train_ui()
 
     #-----------------------------------------------------------
     # 使用するモデルの登録のUI
@@ -136,11 +134,11 @@ class ChatBotGradioUi():
                     # モデルをロードする際のbitサイズの設定
                     load_bit_size_choice = gr.Radio(label="4. Load bit size", info="Select the bit size for model loading.", choices=list(LOAD_BIT_SIZE_DICT["auto"]))
 
-                # 初期状態のテキストボックスを配置
-                model_info_text = gr.Textbox(label="Model information", lines=18, interactive=True, show_copy_button=True)
+                    # モデル情報を送信するボタンを配置
+                    submit_btn = gr.Button("5. Submit", variant="primary")
 
-            # モデル情報を送信するボタンを配置
-            submit_btn = gr.Button("5. Submit", variant="primary")
+                # 初期状態のテキストボックスを配置
+                model_info_text = gr.Textbox(label="Model information", lines=18, interactive=False, show_copy_button=True)
         
         #-----------------------------------------------------------
         # モデルのタイプに応じて、選択できるモデルの表示を変える
@@ -247,33 +245,45 @@ class ChatBotGradioUi():
         with gr.Blocks() as demo:
             with gr.Row():
                 with gr.Column():
-                    # 学習の種類を設定
-                    train_type_choice = gr.Radio(label="1. Training type", choices=["base", "instruction-tuning"], value=None)
-                    
                     # 学習の方法を設定
-                    train_method_choice = gr.Radio(label="2. Training method", choices=["full", "LoRA"], value=None)
+                    train_method_choice = gr.Radio(label="1. Training method", choices=["full", "LoRA"], value=None)
                     
+                    # 学習の種類を設定
+                    train_type_choice = gr.Radio(label="2. Training type", choices=list(DATASETS_DICT.keys()), value=None)
+                      
                     # 学習用のデータセットの種類を選択
-                    datastes_choice = gr.Dropdown(label="3. Datasets", info="Please select the datasets.", choices=["kunishou/databricks-dolly-15k-ja", "etc"], value=None)
-
-                # 初期状態のテキストボックスを配置
-                model_info_text = gr.Textbox(label="Train setting information", lines=10, interactive=True, show_copy_button=True)
-
-            # 学習情報を送信するボタンを配置
-            train_data_submit_btn = gr.Button("4. Train data submit")
+                    datasets_choice = gr.Dropdown(label="3. Datasets", choices=[], value=None)
+                    
+                    # 学習情報を送信するボタンを配置
+                    train_data_submit_btn = gr.Button("4. Train data submit")
             
-            # 学習済みのモデル名を入力するテキストボックスを配置
-            trained_model_name_text = gr.Textbox(label="5. Trained model name", interactive=True, show_copy_button=True)
-            
-            # 学習を開始するボタンを配置
-            # 全ての設定が完了次第、反応するようにしたい
-            train_start_btn = gr.Button("6. Training Start", variant="primary")
+                    # 学習を開始するボタンを配置
+                    # 全ての設定が完了次第、反応するようにしたい
+                    train_start_btn = gr.Button("6. Training Start", variant="primary")
+
+                with gr.Column():
+                    # 初期状態のテキストボックスを配置
+                    model_info_text = gr.Textbox(label="Train setting information", lines=10, interactive=False, show_copy_button=True)
+
+                    # 学習済みのモデル名を入力するテキストボックスを配置
+                    trained_model_name_text = gr.Textbox(label="Trained model name", interactive=False, show_copy_button=True)
+                
             
         #　送信ボタンクリック時の動作を設定
-        train_data_submit_btn.click(fn=self.set_train_condition, inputs=[datastes_choice, train_type_choice, train_method_choice], outputs=model_info_text)
+        train_data_submit_btn.click(fn=self.set_train_condition, inputs=[datasets_choice, train_type_choice, train_method_choice], outputs=[model_info_text, trained_model_name_text])
         
         #　送信ボタンクリック時の動作を設定
         train_start_btn.click(fn=self.training, inputs=[trained_model_name_text], outputs=model_info_text)
+        
+        #-----------------------------------------------------------
+        # モデルのタイプに応じて、選択できるデータセットの表示を変える
+        #-----------------------------------------------------------
+        @train_type_choice.change(inputs=train_type_choice, outputs=datasets_choice)
+        def update_model_name_list(train_type_choice):
+            
+            dataset_name_list = list(DATASETS_DICT[train_type_choice])
+            
+            return gr.Dropdown(choices=dataset_name_list, value=dataset_name_list[0], interactive=True)
         
         
     #-----------------------------------------------------------
@@ -282,53 +292,61 @@ class ChatBotGradioUi():
     def set_train_condition(self, datasets_choice, train_type_choice, train_method_choice):
         
         # 学習方法を設定
+        # フルファインチューニングの場合
         if train_method_choice == "full":
             
-            if train_type_choice == "base":
-                # 学習方法を設定
+            if train_type_choice == "base-tuning":
                 self.train_method = FineTuning()
             
             elif train_type_choice == "instruction-tuning":
-                # 学習方法を設定
                 self.train_method = InstructionFineTuning()
 
                 # 学習に使用するpromptの情報を設定
-                self.prompt_format = PromptInstructionTuningModel(
-                    user_tag="ユーザー:",
-                    system_tag="システム:",
-                )
+                # 学習に使用するModelがinstruction tuning modelの場合、元のモデルに合わせる
+                if type(self.llm.prompt_format) is PromptInstructionTuningModel:
+                    self.prompt_format = self.llm.prompt_format
+                
+                # ベースモデルの場合は、プログラムデフォルトの設定で学習する
+                else:
+                    self.prompt_format = PromptInstructionTuningModel(
+                        user_tag="ユーザー:",
+                        system_tag="システム:"
+                    )
 
             else:
-                return self.train_info + "学習方式が設定されていません"
+                raise gr.Error("The type of training is not set!")
         
+        # LoRAチューニングの場合
         elif train_method_choice == "LoRA":
-            return self.train_info + "LoRAはまだ実装されていません"
+            raise gr.Error("LoRA has not yet been implemented!")
         
         else:
-            return self.train_info + "学習手法が設定されていません"
+            raise gr.Error("Training method is not set!")
         
         # 学習方法に関する情報をログに表示
         self.train_info += "Training method: " + train_method_choice + "\n"
         self.train_info += "Training type: " + train_type_choice + "\n"
         self.train_info += "Datasets: " + datasets_choice + "\n"
-        yield gr.Textbox(visible=True, value=self.train_info)
+        yield gr.Textbox(visible=True, value=self.train_info), gr.Textbox(visible=True, value="")
 
         self.train_info += "Creating a dataset for training. Please wait a moment.....\n"
-        yield gr.Textbox(visible=True, value=self.train_info)
+        yield gr.Textbox(visible=True, value=self.train_info), gr.Textbox(visible=True, value="")
         
         # 学習用のデータセットを作成
         self.train_dataset = self.train_method.create_train_dataset(dataset_name=datasets_choice)
         
         self.train_info += "The dataset for training is complete! The training can now begin!\n"
-        yield gr.Textbox(visible=True, value=self.train_info)
+        yield gr.Textbox(visible=True, value=self.train_info), gr.Textbox(visible=True, value="")
 
         # 学習済みモデルのモデル名を自動生成
-        model_name = self.llm.name.replace('../models/', '')
-        model_name = model_name.replace('/', '-')
-        dataset_name = datasets_choice.replace('/', '-')
-        self.trained_model_name = model_name + "-" + dataset_name + "-" + train_method_choice + "-" + train_type_choice + "-" + "model"
-        self.train_info += self.trained_model_name + "\n"
-        yield gr.Textbox(visible=True, value=self.train_info)
+        if self.llm == None:
+            raise gr.Error("Model is not set!")
+        else:
+            model_name = self.llm.name.replace('../models/', '')
+            model_name = model_name.replace('/', '-')
+            dataset_name = datasets_choice.replace('/', '-')
+            self.trained_model_name = model_name + "-" + dataset_name + "-" + train_method_choice + "-" + train_type_choice + "-" + "model"
+            yield gr.Textbox(visible=True, value=self.train_info), gr.Textbox(visible=True, value=self.trained_model_name)
     
     #-----------------------------------------------------------
     # 使用するモデルの登録

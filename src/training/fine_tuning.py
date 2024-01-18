@@ -1,6 +1,5 @@
 
-import torch
-from transformers import AutoModelForCausalLM, AutoTokenizer
+from transformers import TrainingArguments
 from datasets import load_dataset
 from trl import SFTTrainer
 #======================================================================
@@ -19,6 +18,10 @@ class FineTuning:
     #----------------------------------------------------------
     def training(self, tokenizer, model, prompt_format, train_dataset):
         
+        args = TrainingArguments(
+            output_dir="../temp/train_log"
+        )   
+
         # トレーナーの作成
         trainer = SFTTrainer(
             model=model,
@@ -26,6 +29,7 @@ class FineTuning:
             train_dataset=train_dataset,
             dataset_text_field=prompt_format.formatting_training_prompts_func,
             max_seq_length=128,
+            args=args
         )
     
         # 学習の実行
@@ -39,7 +43,7 @@ class FineTuning:
     def create_train_dataset(self, dataset_name, option=""):
         
         # データセットの読み込み読み込み
-        dataset = load_dataset("tyqiangz/multilingual-sentiments", "japanese")
+        dataset = load_dataset(dataset_name, "japanese")
     
         # 確認
         print(dataset)
@@ -53,26 +57,3 @@ class FineTuning:
         print(train_dataset[0])
     
         return train_dataset
-        
-#======================================================================
-# prompt check
-#======================================================================
-def prompt_check(tokenizer, model, prompt):
-
-    # 推論の実行
-    for i in range(10):
-        inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-        with torch.no_grad():
-            tokens = model.generate(
-                **inputs,
-                max_new_tokens=64,
-                do_sample=True,
-                temperature=0.7,
-                top_p=0.9,
-                repetition_penalty=1.05,
-                pad_token_id=tokenizer.pad_token_id,
-            )
-        
-        output = tokenizer.decode(tokens[0], skip_special_tokens=True)
-        print(output)
-        print("----")
