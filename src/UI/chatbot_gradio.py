@@ -4,7 +4,9 @@ import time
 import torch
 import gradio as gr
 from llm.model_factory import ModelFactory
-from training.full_fine_tuning import FullFineTuning
+from training.fine_tuning import FineTuning
+from training.instruction_fine_tuning import InstructionFineTuning
+from llm.prompt import PromptInstructionTuningModel
 from UI.config import MODEL_LIST, PROCESSOR_LIST, LOAD_BIT_SIZE_LIST, LOAD_BIT_SIZE_LIST_MPS, LOAD_BIT_SIZE_LIST_CPU
 #======================================================================
 # UIの基本クラス
@@ -250,7 +252,7 @@ class ChatBotGradioUi():
                     train_method_choice = gr.Radio(label="2. Training method", choices=["Full Fine Tuning", "LoRA"], value=None)
                     
                     # 学習用のデータセットの種類を選択
-                    datastes_choice = gr.Dropdown(label="3. Datasets", info="Please select the datasets.", choices=["dolly-15-k", "etc"], value=None)
+                    datastes_choice = gr.Dropdown(label="3. Datasets", info="Please select the datasets.", choices=["kunishou/databricks-dolly-15k-ja", "etc"], value=None)
 
                 # 初期状態のテキストボックスを配置
                 model_info_text = gr.Textbox(label="Train setting information", lines=10, interactive=True, show_copy_button=True)
@@ -279,7 +281,7 @@ class ChatBotGradioUi():
         
         # 学習手法を設定
         if train_method_choice == "Full Fine Tuning":
-            self.train_method = FullFineTuning(
+            self.train_method = FineTuning(
                 tokenizer=self.llm.tokenizer, 
                 model=self.llm.model
             )
@@ -295,7 +297,11 @@ class ChatBotGradioUi():
         if train_type_choice == "Base":
             pass
         elif train_type_choice == "Instruction Tuning":
-            pass
+            #train_type = InstructionFineTuning()
+            self.prompt_format = PromptInstructionTuningModel(
+                user_tag="ユーザー:", 
+                system_tag="システム:"
+            )
         else:
             return "学習方式が設定されていません"
         
@@ -313,7 +319,8 @@ class ChatBotGradioUi():
         # トレーニングを行う
         self.trainer = self.train_method.training(
             tokenizer=self.llm.tokenizer, 
-            model=self.llm.model, 
+            model=self.llm.model,
+            prompt_format=self.prompt_format, 
             train_dataset=self.train_dataset
         )
     

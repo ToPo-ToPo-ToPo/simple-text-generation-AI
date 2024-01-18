@@ -4,9 +4,9 @@ from transformers import AutoModelForCausalLM, AutoTokenizer
 from datasets import load_dataset
 from trl import SFTTrainer
 #======================================================================
-# フルファインチューニングを行う
+# ファインチューニングを行う
 #======================================================================
-class FullFineTuning:
+class FineTuning:
     
     #----------------------------------------------------------
     # コンストラクタ
@@ -19,7 +19,7 @@ class FullFineTuning:
     #----------------------------------------------------------
     # フルファインチューニングを行う
     #----------------------------------------------------------
-    def training(self, tokenizer, model, train_dataset):
+    def training(self, tokenizer, model, prompt_format, train_dataset):
         
         # トレーナーの作成
         trainer = SFTTrainer(
@@ -38,7 +38,7 @@ class FullFineTuning:
     #----------------------------------------------------------
     # トレーニングデータを作成する
     #----------------------------------------------------------
-    def create_train_dataset(self, dataset_name):
+    def create_train_dataset(self, dataset_name, option=""):
         
         # データセットの読み込み読み込み
         dataset = load_dataset("tyqiangz/multilingual-sentiments", "japanese")
