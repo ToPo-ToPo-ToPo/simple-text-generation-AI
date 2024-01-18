@@ -18,10 +18,10 @@ class ModelFactory:
     #----------------------------------------------------------
     # LLMのモデルを生成し、返す
     #----------------------------------------------------------
-    def create(self, model_type, model_name, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False, llm_int8_enable_fp32_cpu_offload=False):
+    def create(self, model_group, model_name, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False, llm_int8_enable_fp32_cpu_offload=False):
         
         # 入力されたmodel名からLLMを作成する
-        if model_type == "rinna-instruction-model":
+        if model_group == "rinna-instruction-model":
             return RinnaInstructionTuningModel(
                 model_name=model_name,
                 processor=processor, 
@@ -30,7 +30,7 @@ class ModelFactory:
                 load_in_4bit=load_in_4bit
             )
         
-        elif model_type == "line-corporation-instruction-model":
+        elif model_group == "line-corporation-instruction-model":
             return LineInstructionTuningModel(
                 model_name=model_name,
                 processor=processor, 
@@ -39,7 +39,7 @@ class ModelFactory:
                 load_in_4bit=load_in_4bit
             )
         
-        elif model_type == "cyberagent-base-model":
+        elif model_group == "cyberagent-base-model":
             return CyberagentBaseModel(
                 model_name=model_name,
                 processor=processor, 
@@ -49,7 +49,7 @@ class ModelFactory:
                 llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload
             )
 
-        elif model_type == "cyberagent-instruction-model":
+        elif model_group == "cyberagent-instruction-model":
             return CyberagentInstructionTuningModel(
                 model_name=model_name,
                 processor=processor, 

@@ -7,7 +7,9 @@ from llm.model_factory import ModelFactory
 from training.fine_tuning import FineTuning
 from training.instruction_fine_tuning import InstructionFineTuning
 from llm.prompt import PromptInstructionTuningModel
-from configure.config import MODEL_DICT, PROCESSOR_LIST, LOAD_BIT_SIZE_LIST, LOAD_BIT_SIZE_LIST_MPS, LOAD_BIT_SIZE_LIST_CPU
+from configure.model_config import MODEL_DICT
+from configure.processor_config import PROCESSOR_LIST
+from configure.load_bit_size_config import LOAD_BIT_SIZE_DICT
 #======================================================================
 # UIの基本クラス
 #======================================================================
@@ -124,19 +126,19 @@ class ChatBotGradioUi():
             with gr.Row():
                 with gr.Column():
                     # 使用するベースのModelを選択
-                    model_type_choice = gr.Dropdown(label="1. Model base type", info="Please select the base type of LLM.", choices=list(MODEL_DICT.keys()), value=None)
+                    model_group_choice = gr.Dropdown(label="1. Model group", info="Please select the LLM group.", choices=list(MODEL_DICT.keys()), value=None)
 
                     # 使用するModelの選択
-                    model_choice = gr.Dropdown(label="2. Model name", info="Please select the name of LLM.", choices=[], value=None)
+                    model_name_choice = gr.Dropdown(label="2. Model name", info="Please select the LLM name.", choices=[], value=None)
 
                     # 使用するアーキテクチャの設定
                     processor_choice = gr.Radio(label="3. Processor type", choices=PROCESSOR_LIST, value=None)
 
                     # モデルをロードする際のbitサイズの設定
-                    load_bit_size_choice = gr.Radio(label="4. Load bit size", info="Select the bit size for model loading.", choices=LOAD_BIT_SIZE_LIST)
+                    load_bit_size_choice = gr.Radio(label="4. Load bit size", info="Select the bit size for model loading.", choices=list(LOAD_BIT_SIZE_DICT["auto"]))
 
                 # 初期状態のテキストボックスを配置
-                model_info_text = gr.Textbox(label="Model information", lines=20, interactive=True, show_copy_button=True)
+                model_info_text = gr.Textbox(label="Model information", lines=18, interactive=True, show_copy_button=True)
 
             # モデル情報を送信するボタンを配置
             submit_btn = gr.Button("5. Submit", variant="primary")
@@ -144,21 +146,25 @@ class ChatBotGradioUi():
         #-----------------------------------------------------------
         # モデルのタイプに応じて、選択できるモデルの表示を変える
         #-----------------------------------------------------------
-        @model_type_choice.change(inputs=model_type_choice, outputs=model_choice)
-        def update_model_list(model_type_choice):
+        @model_group_choice.change(inputs=model_group_choice, outputs=model_name_choice)
+        def update_model_name_list(model_group_choice):
             
-            model_list = list(MODEL_DICT[model_type_choice])
+            model_name_list = list(MODEL_DICT[model_group_choice])
             
-            return gr.Dropdown(choices=model_list, value=model_list[0], interactive=True)
+            return gr.Dropdown(choices=model_name_list, value=model_name_list[0], interactive=True)
 
         #-----------------------------------------------------------
         # 選択内容に応じてテキストボックスの表示を変える
         #-----------------------------------------------------------
         @processor_choice.change(inputs=processor_choice, outputs=load_bit_size_choice)
         def update_bit_size_radio(processor_choice):
+            
+            load_bit_size_list = list(LOAD_BIT_SIZE_DICT[processor_choice])
+  
+            return gr.Radio(choices=load_bit_size_list, value=load_bit_size_list[0], interactive=True)
 
-            if processor_choice == "cuda":
-                return gr.Radio(choices=LOAD_BIT_SIZE_LIST, interactive=True)
+            """if processor_choice == "cuda":
+                return gr.Radio(choices=LOAD_BIT_SIZE["cuda"], interactive=True)
             
             elif processor_choice == "mps":
                 return gr.Radio(choices=LOAD_BIT_SIZE_LIST_MPS, interactive=True)
@@ -174,16 +180,16 @@ class ChatBotGradioUi():
                      return gr.Radio(choices=LOAD_BIT_SIZE_LIST, interactive=True)
             
             else:
-                return gr.Radio(interactive=False)
+                return gr.Radio(interactive=False)"""
 
         #　送信ボタンクリック時の動作を設定
         #　引数：model_name, processor_radio, load_bit_size_radioを関数set_model()に入力
-        submit_btn.click(fn=self.set_model, inputs=[model_type_choice, model_choice, processor_choice, load_bit_size_choice], outputs=model_info_text)
+        submit_btn.click(fn=self.set_model, inputs=[model_group_choice, model_name_choice, processor_choice, load_bit_size_choice], outputs=model_info_text)
 
     #-----------------------------------------------------------
     # 使用するモデルの登録
     #-----------------------------------------------------------
-    def set_model(self, model_type_choice, model_name_choice, processor_choice, load_bit_size_choice):
+    def set_model(self, model_group_choice, model_name_choice, processor_choice, load_bit_size_choice):
         
         # データの初期化
         load_in_8bit = False
@@ -236,7 +242,7 @@ class ChatBotGradioUi():
             # llmの具体的な設定
             model_factory = ModelFactory()
             self.llm = model_factory.create(
-                model_type=model_type_choice,
+                model_group=model_group_choice,
                 model_name=model_name_choice, 
                 processor=processor_choice, 
                 load_bit_size=load_bit_size, 
