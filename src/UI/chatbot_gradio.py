@@ -177,12 +177,12 @@ class ChatBotGradioUi():
 
         #　送信ボタンクリック時の動作を設定
         #　引数：model_name, processor_radio, load_bit_size_radioを関数set_model()に入力
-        submit_btn.click(fn=self.set_model, inputs=[model_choice, processor_choice, load_bit_size_choice], outputs=model_info_text)
+        submit_btn.click(fn=self.set_model, inputs=[model_type_choice, model_choice, processor_choice, load_bit_size_choice], outputs=model_info_text)
 
     #-----------------------------------------------------------
     # 使用するモデルの登録
     #-----------------------------------------------------------
-    def set_model(self, model_choice, processor_choice, load_bit_size_choice):
+    def set_model(self, model_type_choice, model_name_choice, processor_choice, load_bit_size_choice):
         
         # データの初期化
         load_in_8bit = False
@@ -214,7 +214,7 @@ class ChatBotGradioUi():
         
         # モデルが設定されているか確認
         # 設定されていない場合
-        if model_choice == []:
+        if model_name_choice == []:
             self.info += "The submit button was pressed, but the model is not set up. Please check again.\n"
             yield gr.Textbox(visible=True, value=self.info)
         
@@ -224,7 +224,7 @@ class ChatBotGradioUi():
             self.info += "---------------------------------------------------------\n"
             self.info += "Model information\n"
             self.info += "---------------------------------------------------------\n"
-            self.info += "Model: " + model_choice + "\n"
+            self.info += "Model: " + model_name_choice + "\n"
             self.info += "Processor: " + processor_choice + "\n"
             self.info += "Load bit size: " + load_bit_size_choice + "\n\n"
             self.info += "The model is now loading. Please wait a moment.....\n"
@@ -235,7 +235,8 @@ class ChatBotGradioUi():
             # llmの具体的な設定
             model_factory = ModelFactory()
             self.llm = model_factory.create(
-                name=model_choice, 
+                model_type=model_type_choice,
+                model_name=model_name_choice, 
                 processor=processor_choice, 
                 load_bit_size=load_bit_size, 
                 load_in_8bit=load_in_8bit,
