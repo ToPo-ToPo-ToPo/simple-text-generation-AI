@@ -46,14 +46,14 @@ class FineTuning:
         dataset = load_dataset(dataset_name, "japanese")
     
         # 確認
-        print(dataset)
-        print(dataset["train"][0])
+        #print(dataset)
+        #print(dataset["train"][0])
     
         # データセットをpositiveのみ5000個でフィルタリング
         train_dataset = dataset["train"].filter(lambda data: data["label"] == 0).select(range(5000))
 
         # 確認
-        print(train_dataset)
-        print(train_dataset[0])
+        #print(train_dataset)
+        #print(train_dataset[0])
     
         return train_dataset

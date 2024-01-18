@@ -46,14 +46,14 @@ class InstructionFineTuning:
         dataset = load_dataset(dataset_name)
     
         # 確認
-        print(dataset)
-        print(dataset["train"][0])
+        #print(dataset)
+        #print(dataset["train"][0])
     
         # データセットをinputが空の要素のみ5000個でフィルタリング
-        train_dataset = dataset["train"].filter(lambda data: data["input"] == "").select(range(1000))
+        train_dataset = dataset["train"].filter(lambda data: data["input"] == "").select(range(5000))
 
         # 確認
-        print(train_dataset)
-        print(train_dataset[0])
+        #print(train_dataset)
+        #print(train_dataset[0])
     
         return train_dataset

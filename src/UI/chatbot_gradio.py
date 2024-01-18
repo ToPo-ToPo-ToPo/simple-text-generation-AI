@@ -259,7 +259,7 @@ class ChatBotGradioUi():
             
                     # 学習を開始するボタンを配置
                     # 全ての設定が完了次第、反応するようにしたい
-                    train_start_btn = gr.Button("6. Training Start", variant="primary")
+                    train_start_btn = gr.Button("5. Training Start", variant="primary")
 
                 with gr.Column():
                     # 初期状態のテキストボックスを配置
@@ -308,10 +308,7 @@ class ChatBotGradioUi():
                 
                 # ベースモデルの場合は、プログラムデフォルトの設定で学習する
                 else:
-                    self.prompt_format = PromptInstructionTuningModel(
-                        user_tag="ユーザー:",
-                        system_tag="システム:"
-                    )
+                    self.prompt_format = PromptInstructionTuningModel(user_tag="ユーザー:", system_tag="システム:")
 
             else:
                 raise gr.Error("The type of training is not set!")
