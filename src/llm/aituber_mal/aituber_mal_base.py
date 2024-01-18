@@ -2,7 +2,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import T5Tokenizer
-import platform
+from llm.prompt import PromptInstructionTuningModel
 #====================================================================
 # AITuber MaLのベースを管理するクラス
 # line-3.6bのモデルに対してLoraを行なったモデル
@@ -24,13 +24,19 @@ class AituberMalBase:
             torch_dtype=load_bit_size, 
             load_in_8bit=load_in_8bit
         )
+
+        # プロンプトの設定
+        self.prompt = PromptInstructionTuningModel(
+            user_tag="ユーザー:",
+            system_tag="システム:",
+        )
     
     #----------------------------------------------------------
     # プロンプトの設定
     #----------------------------------------------------------
     def generate_prompt(self, question=None):
 
-        prompt = f"ユーザー: {question}\nシステム: "
+        prompt = self.prompt.generate(question=question)
 
         return prompt
     

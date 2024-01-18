@@ -2,7 +2,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import BitsAndBytesConfig
-from llm.cyberagent.prompt import PromptInstructionTuningModel
+from llm.prompt import PromptInstructionTuningModel
 #====================================================================
 # lineのベースを管理するクラス
 #====================================================================
@@ -43,7 +43,11 @@ class Calm2_7b_Chat:
             
         
         # プロンプトの設定
-        self.prompt = PromptInstructionTuningModel()
+        self.prompt = PromptInstructionTuningModel(
+            user_tag="USER:",
+            system_tag="ASSISTANT:",
+            end_of_string="<|endoftext|>"
+            )
     
     #----------------------------------------------------------
     # プロンプトの設定

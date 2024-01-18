@@ -2,6 +2,7 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import T5Tokenizer
+from llm.prompt import PromptInstructionTuningModel
 #====================================================================
 # rinnaのベースを管理するクラス
 #====================================================================
@@ -23,26 +24,20 @@ class RinnaGptNeox3b:
             load_in_8bit=load_in_8bit,
             load_in_4bit=load_in_4bit
         )
+
+        # プロンプトの設定
+        self.prompt = PromptInstructionTuningModel(
+            user_tag="ユーザー:",
+            system_tag="システム:",
+            new_line_tag="<NL>"
+        )
     
     #----------------------------------------------------------
     # プロンプトの設定
     #----------------------------------------------------------
-    def generate_prompt(self, question=None):
+    def generate_prompt(self, question):
 
-        prompt = [
-            {
-                "speaker": "ユーザー",
-                "text": question
-            }
-        ]
-
-        prompt = [
-            f"{uttr['speaker']}: {uttr['text']}"
-            for uttr in prompt
-        ]
-
-        prompt = "<NL>".join(prompt)
-        prompt = (prompt + "<NL>" + "システム: ")
+        prompt = self.prompt.generate(question=question)
 
         return prompt
     

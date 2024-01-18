@@ -2,10 +2,11 @@
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import T5Tokenizer
+from llm.prompt import PromptInstructionTuningModel
 #====================================================================
 # lineのベースを管理するクラス
 #====================================================================
-class LineSft3_6b:
+class LineSft3b:
 
     #----------------------------------------------------------
     # コンストラクタ
@@ -24,12 +25,18 @@ class LineSft3_6b:
             load_in_4bit=load_in_4bit
         )
 
+        # プロンプトの設定
+        self.prompt = PromptInstructionTuningModel(
+            user_tag="ユーザー:",
+            system_tag="システム:",
+        )
+
     #----------------------------------------------------------
     # プロンプトの設定
     #----------------------------------------------------------
-    def generate_prompt(self, question=None):
+    def generate_prompt(self, question):
 
-        prompt = f"ユーザー: {question}\nシステム: "
+        prompt = self.prompt.generate(question=question)
 
         return prompt
     
