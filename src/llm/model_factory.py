@@ -1,9 +1,9 @@
 
-from llm.rinna.rinna_gpt_neox_3b import RinnaGptNeox3b
-from llm.line.line_base import LineSft3b
-from llm.cyberagent.open_calm_small import OpenCalmSmall
-from llm.cyberagent.calm2_7b import Calm2_7b_Chat
-from llm.aituber_mal.aituber_mal_base import AituberMalBase
+from llm.rinna_gpt_neox_3b import RinnaGptNeox3b
+from llm.line_base import LineSft3b
+from llm.open_calm_small import OpenCalmSmall
+from llm.calm2_7b import Calm2_7b_Chat
+from llm.aituber_mal_base import AituberMalBase
 #====================================================================
 # 各種LLMを生成するクラス
 #====================================================================

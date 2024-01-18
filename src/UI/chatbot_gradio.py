@@ -7,7 +7,7 @@ from llm.model_factory import ModelFactory
 from training.fine_tuning import FineTuning
 from training.instruction_fine_tuning import InstructionFineTuning
 from llm.prompt import PromptInstructionTuningModel
-from UI.config import MODEL_LIST, PROCESSOR_LIST, LOAD_BIT_SIZE_LIST, LOAD_BIT_SIZE_LIST_MPS, LOAD_BIT_SIZE_LIST_CPU
+from configure.config import MODEL_DICT, PROCESSOR_LIST, LOAD_BIT_SIZE_LIST, LOAD_BIT_SIZE_LIST_MPS, LOAD_BIT_SIZE_LIST_CPU
 #======================================================================
 # UIの基本クラス
 #======================================================================
@@ -122,8 +122,11 @@ class ChatBotGradioUi():
         with gr.Blocks() as demo:
             with gr.Row():
                 with gr.Column():
+                    # 使用するベースのModelを選択
+                    model_type_choice = gr.Dropdown(label="1. Model type", info="Please select the LLM.", choices=list(MODEL_DICT.keys()), value=None)
+
                     # 使用するModelの選択
-                    model_choice = gr.Dropdown(label="1. Model", info="Please select the LLM.", choices=MODEL_LIST, value=None)
+                    model_choice = gr.Dropdown(label="1. Model", info="Please select the LLM.", choices=[], value=None)
 
                     # 使用するアーキテクチャの設定
                     processor_choice = gr.Radio(label="2. Processor type", choices=PROCESSOR_LIST, value=None)
@@ -137,6 +140,15 @@ class ChatBotGradioUi():
             # モデル情報を送信するボタンを配置
             submit_btn = gr.Button("4. Submit", variant="primary")
         
+        #-----------------------------------------------------------
+        # モデルのタイプに応じて、選択できるモデルの表示を変える
+        #-----------------------------------------------------------
+        @model_type_choice.change(inputs=model_type_choice, outputs=model_choice)
+        def update_model_list(model_type_choice):
+            
+            model_list = list(MODEL_DICT[model_type_choice])
+            
+            return gr.Dropdown(choices=model_list, value=model_list[0], interactive=True)
 
         #-----------------------------------------------------------
         # 選択内容に応じてテキストボックスの表示を変える

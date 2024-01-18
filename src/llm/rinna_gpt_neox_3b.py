@@ -44,7 +44,7 @@ class RinnaGptNeox3b:
     #----------------------------------------------------------
     # 入力したpromptに対して回答を作成
     #----------------------------------------------------------
-    def response(self, prompt=None):
+    def response(self, prompt):
 
         token_ids = self.tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
 
