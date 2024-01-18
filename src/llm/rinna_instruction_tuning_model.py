@@ -28,7 +28,7 @@ class RinnaInstructionTuningModel:
         )
 
         # プロンプトの設定
-        self.prompt = PromptInstructionTuningModel(
+        self.prompt_format = PromptInstructionTuningModel(
             user_tag="ユーザー:",
             system_tag="システム:",
             new_line_tag="<NL>"
@@ -39,7 +39,7 @@ class RinnaInstructionTuningModel:
     #----------------------------------------------------------
     def generate_prompt(self, question):
 
-        prompt = self.prompt.generate(question=question)
+        prompt = self.prompt_format.generate(question=question)
 
         return prompt
     

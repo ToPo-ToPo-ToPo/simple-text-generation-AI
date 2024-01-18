@@ -43,18 +43,18 @@ class CyberagentInstructionTuningModel:
             
         
         # プロンプトの設定
-        self.prompt = PromptInstructionTuningModel(
+        self.prompt_format = PromptInstructionTuningModel(
             user_tag="USER:",
             system_tag="ASSISTANT:",
             end_of_string="<|endoftext|>"
-            )
+        )
     
     #----------------------------------------------------------
     # プロンプトの設定
     #----------------------------------------------------------
     def generate_prompt(self, question=None):
 
-        prompt = self.prompt.generate(question=question)
+        prompt = self.prompt_format.generate(question=question)
 
         return prompt
     

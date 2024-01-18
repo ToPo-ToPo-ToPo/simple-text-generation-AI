@@ -11,10 +11,8 @@ class FineTuning:
     #----------------------------------------------------------
     # コンストラクタ
     #----------------------------------------------------------
-    def __init__(self, tokenizer, model):
-        
-        self.tokenizer = tokenizer
-        self.model = model
+    def __init__(self):
+        pass
     
     #----------------------------------------------------------
     # フルファインチューニングを行う
@@ -26,7 +24,7 @@ class FineTuning:
             model=model,
             tokenizer=tokenizer,
             train_dataset=train_dataset,
-            dataset_text_field="text",
+            dataset_text_field=prompt_format.formatting_training_prompts_func,
             max_seq_length=128,
         )
     

@@ -123,22 +123,22 @@ class ChatBotGradioUi():
             with gr.Row():
                 with gr.Column():
                     # 使用するベースのModelを選択
-                    model_type_choice = gr.Dropdown(label="1. Model type", info="Please select the LLM.", choices=list(MODEL_DICT.keys()), value=None)
+                    model_type_choice = gr.Dropdown(label="1. Model base type", info="Please select the base type of LLM.", choices=list(MODEL_DICT.keys()), value=None)
 
                     # 使用するModelの選択
-                    model_choice = gr.Dropdown(label="1. Model", info="Please select the LLM.", choices=[], value=None)
+                    model_choice = gr.Dropdown(label="2. Model name", info="Please select the name of LLM.", choices=[], value=None)
 
                     # 使用するアーキテクチャの設定
-                    processor_choice = gr.Radio(label="2. Processor type", choices=PROCESSOR_LIST, value=None)
+                    processor_choice = gr.Radio(label="3. Processor type", choices=PROCESSOR_LIST, value=None)
 
                     # モデルをロードする際のbitサイズの設定
-                    load_bit_size_choice = gr.Radio(label="3. Load bit size", info="Select the bit size for model loading.", choices=LOAD_BIT_SIZE_LIST)
+                    load_bit_size_choice = gr.Radio(label="4. Load bit size", info="Select the bit size for model loading.", choices=LOAD_BIT_SIZE_LIST)
 
                 # 初期状態のテキストボックスを配置
-                model_info_text = gr.Textbox(label="Model information", lines=10, interactive=True, show_copy_button=True)
+                model_info_text = gr.Textbox(label="Model information", lines=20, interactive=True, show_copy_button=True)
 
             # モデル情報を送信するボタンを配置
-            submit_btn = gr.Button("4. Submit", variant="primary")
+            submit_btn = gr.Button("5. Submit", variant="primary")
         
         #-----------------------------------------------------------
         # モデルのタイプに応じて、選択できるモデルの表示を変える
@@ -241,7 +241,7 @@ class ChatBotGradioUi():
                 load_bit_size=load_bit_size, 
                 load_in_8bit=load_in_8bit,
                 load_in_4bit=load_in_4bit,
-                llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload
+                llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload,
             )
 
             # 表示する情報を作成
@@ -297,20 +297,17 @@ class ChatBotGradioUi():
         if train_method_choice == "Full Fine Tuning":
             
             if train_type_choice == "Base":
-                self.train_method = FineTuning(
-                    tokenizer=self.llm.tokenizer, 
-                    model=self.llm.model
-                )
+                # 学習方法を設定
+                self.train_method = FineTuning()
             
             elif train_type_choice == "Instruction Tuning":
-                self.train_method = InstructionFineTuning(
-                    tokenizer=self.llm.tokenizer, 
-                    model=self.llm.model
-                )
-                
+                # 学習方法を設定
+                self.train_method = InstructionFineTuning()
+
+                # 学習に使用するpromptの情報を設定
                 self.prompt_format = PromptInstructionTuningModel(
-                    user_tag="ユーザー:", 
-                    system_tag="システム:"
+                    user_tag="ユーザー:",
+                    system_tag="システム:",
                 )
 
             else:
@@ -322,6 +319,7 @@ class ChatBotGradioUi():
         else:
             return self.train_info + "学習手法が設定されていません"
         
+        # 学習方法に関する情報をログに表示
         self.train_info += "Training method: " + train_method_choice + "\n"
         self.train_info += "Training type: " + train_type_choice + "\n"
         self.train_info += "Datasets: " + datasets_choice + "\n"
@@ -346,7 +344,7 @@ class ChatBotGradioUi():
         yield gr.Textbox(visible=True, value=self.train_info)
 
         # トレーニングを行う
-        self.trainer = self.train_method.training(
+        trainer = self.train_method.training(
             tokenizer=self.llm.tokenizer, 
             model=self.llm.model,
             prompt_format=self.prompt_format, 
@@ -358,7 +356,7 @@ class ChatBotGradioUi():
     
         # モデルの保存
         save_name = "../models/" + trained_model_name_text
-        self.trainer.save_model(save_name)
+        trainer.save_model(save_name)
 
         self.train_info += "The results of the training have been saved.\n"
         yield gr.Textbox(visible=True, value=self.train_info)

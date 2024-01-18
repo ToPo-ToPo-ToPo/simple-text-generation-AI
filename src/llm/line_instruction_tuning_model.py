@@ -26,7 +26,7 @@ class LineInstructionTuningModel:
         )
 
         # プロンプトの設定
-        self.prompt = PromptInstructionTuningModel(
+        self.prompt_format = PromptInstructionTuningModel(
             user_tag="ユーザー:",
             system_tag="システム:",
         )
@@ -36,7 +36,7 @@ class LineInstructionTuningModel:
     #----------------------------------------------------------
     def generate_prompt(self, question):
 
-        prompt = self.prompt.generate(question=question)
+        prompt = self.prompt_format.generate(question=question)
 
         return prompt
     

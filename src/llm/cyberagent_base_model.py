@@ -26,14 +26,14 @@ class CyberagentBaseModel:
         )
         
         # プロンプトの設定
-        self.prompt = PromptBaseModel()
+        self.prompt_format = PromptBaseModel()
     
     #----------------------------------------------------------
     # プロンプトの設定
     #----------------------------------------------------------
     def generate_prompt(self, question=None):
 
-        prompt = self.prompt.generate(question=question)
+        prompt = self.prompt_format.generate(question=question)
 
         return prompt
     
