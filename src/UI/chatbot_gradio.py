@@ -329,6 +329,9 @@ class ChatBotGradioUi():
     #-----------------------------------------------------------
     def training(self, trained_model_name_text):
         
+        self.train_info += "Currently training. Please wait a moment.....\n"
+        yield gr.Textbox(visible=True, value=self.train_info)
+
         # トレーニングを行う
         self.trainer = self.train_method.training(
             tokenizer=self.llm.tokenizer, 
@@ -336,7 +339,13 @@ class ChatBotGradioUi():
             prompt_format=self.prompt_format, 
             train_dataset=self.train_dataset
         )
+
+        self.train_info += "Training is complete.\n"
+        yield gr.Textbox(visible=True, value=self.train_info)
     
         # モデルの保存
         save_name = "../models/" + trained_model_name_text
-        self.trainer.save_model("save_name")
+        self.trainer.save_model(save_name)
+
+        self.train_info += "The results of the training have been saved.\n"
+        yield gr.Textbox(visible=True, value=self.train_info)
