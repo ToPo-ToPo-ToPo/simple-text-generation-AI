@@ -1,4 +1,5 @@
 
+import platform
 import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 from transformers import BitsAndBytesConfig
@@ -15,6 +16,7 @@ class CyberagentInstructionTuningModel:
 
         #
         self.name = model_name
+        self.processor = processor
 
         #
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path=model_name)
@@ -51,6 +53,29 @@ class CyberagentInstructionTuningModel:
             system_tag="ASSISTANT:",
             end_of_string="<|endoftext|>"
         )
+    
+    #----------------------------------------------------------
+    # デストラクタ
+    #----------------------------------------------------------
+    def __del__(self):
+        
+        # CPUに保存されたメモリを解放する
+        del self.tokenizer
+        del self.model
+        del self.prompt_format
+
+        # GPUに保存されたメモリを解放する
+        if self.processor == "cuda":
+            torch.cuda.empty_cache()
+        
+        elif self.processor == "mps":
+            torch.mps.empty_cache()
+        
+        elif self.processor == "auto":
+            if platform.system() == 'Darwin':
+                torch.mps.empty_cache()
+            else:
+                torch.cuda.empty_cache()
     
     #----------------------------------------------------------
     # プロンプトの設定

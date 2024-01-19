@@ -1,4 +1,5 @@
 
+import platform
 import torch
 from transformers import T5Tokenizer, AutoModelForCausalLM
 from llm.prompt import PromptInstructionTuningModel
@@ -14,6 +15,7 @@ class RinnaInstructionTuningModel:
 
         #
         self.name = model_name
+        self.processor = processor
 
         #
         self.tokenizer = T5Tokenizer.from_pretrained(
@@ -36,6 +38,30 @@ class RinnaInstructionTuningModel:
             system_tag="システム:",
             new_line_tag="<NL>"
         )
+    
+    #----------------------------------------------------------
+    # デストラクタ
+    #----------------------------------------------------------
+    def __del__(self):
+        
+        # CPUに保存されたメモリを解放する
+        del self.tokenizer
+        del self.model
+        del self.prompt_format
+
+        # GPUに保存されたメモリを解放する
+        if self.processor == "cuda":
+            torch.cuda.empty_cache()
+        
+        elif self.processor == "mps":
+            torch.mps.empty_cache()
+        
+        elif self.processor == "auto":
+            if platform.system() == 'Darwin':
+                torch.mps.empty_cache()
+            else:
+                torch.cuda.empty_cache()
+
     
     #----------------------------------------------------------
     # プロンプトの設定

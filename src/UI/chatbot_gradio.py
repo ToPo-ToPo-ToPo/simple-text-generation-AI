@@ -139,6 +139,9 @@ class ChatBotGradioUi():
                     # モデル情報を送信するボタンを配置
                     submit_btn = gr.Button("5. Submit", variant="primary")
 
+                    # モデル情報をクリアするボタンを配置
+                    clear_model_btn = gr.Button("Clear model")
+
                 # 初期状態のテキストボックスを配置
                 model_info_text = gr.Textbox(label="Model information", lines=18, interactive=False, show_copy_button=True)
         
@@ -163,9 +166,16 @@ class ChatBotGradioUi():
             return gr.Radio(choices=load_bit_size_list, value=load_bit_size_list[0], interactive=True)
 
 
+        #-----------------------------------------------------------
         #　送信ボタンクリック時の動作を設定
         #　引数：model_name, processor_radio, load_bit_size_radioを関数set_model()に入力
+        #-----------------------------------------------------------
         submit_btn.click(fn=self.set_model, inputs=[model_group_choice, model_name_choice, processor_choice, load_bit_size_choice], outputs=model_info_text)
+
+        #-----------------------------------------------------------
+        #　モデルを削除するボタンの動作を設定
+        #-----------------------------------------------------------
+        clear_model_btn.click(fn=self.clear_model, inputs=None, outputs=model_info_text)
 
     #-----------------------------------------------------------
     # 使用するモデルの登録
@@ -239,6 +249,26 @@ class ChatBotGradioUi():
             yield gr.Textbox(visible=True, value=self.info)
     
     #-----------------------------------------------------------
+    # 設定されたモデルのクリア
+    #-----------------------------------------------------------
+    def clear_model(self):
+
+        if self.llm != None:
+            
+            # オブジェクトを削除
+            del self.llm
+
+            # 初期化
+            self.llm = None
+
+            self.info += "Model is cleared.\n"
+            return gr.Textbox(visible=True, value=self.info)
+        
+        else:
+            self.info += "The model was not cleared because there was no model.\n"
+            return gr.Textbox(visible=True, value=self.info)
+
+    #-----------------------------------------------------------
     # 学習に関する情報登録のUI
     #-----------------------------------------------------------
     def set_train_ui(self):
@@ -268,10 +298,10 @@ class ChatBotGradioUi():
 
                 with gr.Column():
                     # 初期状態のテキストボックスを配置
-                    model_info_text = gr.Textbox(label="Train setting information", lines=10, interactive=False, show_copy_button=True)
+                    model_info_text = gr.Textbox(label="Train setting information", lines=9, interactive=False, show_copy_button=True)
 
                     # 学習済みのモデル名を入力するテキストボックスを配置
-                    trained_model_name_text = gr.Textbox(label="Trained model name", interactive=False, show_copy_button=True)
+                    trained_model_name_text = gr.Textbox(label="Trained model name", lines=2, interactive=False, show_copy_button=True)
                 
             
         #　送信ボタンクリック時の動作を設定

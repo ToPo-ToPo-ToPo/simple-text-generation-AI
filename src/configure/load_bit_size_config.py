@@ -5,11 +5,8 @@ import torch
 # 使用できるロード時のbitサイズの種類を指定しておく
 # load_in_4bitはWindowsで使用できなかったため削除した
 #======================================================================
-# OSの情報を取得する
-pf = platform.system()
-
 # macの場合
-if pf == 'Darwin':
+if platform.system() == 'Darwin':
     if torch.backends.mps.is_available():
         LOAD_BIT_SIZE_DICT = {
             "auto" : ["float32"],
