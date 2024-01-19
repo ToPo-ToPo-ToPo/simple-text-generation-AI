@@ -137,13 +137,13 @@ class ChatBotGradioUi():
                     load_bit_size_choice = gr.Radio(label="4. Load bit size", info="Select the bit size for model loading.", choices=list(LOAD_BIT_SIZE_DICT["auto"]))
 
                     # モデル情報を送信するボタンを配置
-                    submit_btn = gr.Button("5. Submit", variant="primary")
+                    submit_btn = gr.Button("5. Submit model data", variant="primary")
 
                     # モデル情報をクリアするボタンを配置
                     clear_model_btn = gr.Button("Clear model")
 
                 # 初期状態のテキストボックスを配置
-                model_info_text = gr.Textbox(label="Model information", lines=18, interactive=False, show_copy_button=True)
+                model_info_text = gr.Textbox(label="Model information", lines=23, interactive=False, show_copy_button=True)
         
         #-----------------------------------------------------------
         # モデルのタイプに応じて、選択できるモデルの表示を変える
@@ -284,22 +284,25 @@ class ChatBotGradioUi():
                     train_type_choice = gr.Radio(label="2. Training type", choices=list(DATASETS_DICT.keys()), value=None)
                       
                     # 学習用のデータセットの種類を選択
-                    datasets_choice = gr.Dropdown(label="3. Datasets", choices=[], value=None)
+                    datasets_choice = gr.Dropdown(label="3. Datasets", info="After deciding on a training method, you can choose it.", choices=[], value=None)
 
                     # 学習時に使用するプロンプトの種類を選択
                     prompt_format_choice = gr.Dropdown(label="4. Prompt format for the training", choices=list(PROMPT_DICT.keys()), value=None)
-                    
-                    # 学習情報を送信するボタンを配置
-                    train_data_submit_btn = gr.Button("5. Train data submit")
-            
-                    # 学習を開始するボタンを配置
-                    # 全ての設定が完了次第、反応するようにしたい
-                    train_start_btn = gr.Button("6. Training Start", variant="primary")
 
                 with gr.Column():
                     # 初期状態のテキストボックスを配置
-                    model_info_text = gr.Textbox(label="Train setting information", lines=9, interactive=False, show_copy_button=True)
+                    model_info_text = gr.Textbox(label="Training data information", lines=14, interactive=False, show_copy_button=True)
+                
+            with gr.Row():
+                with gr.Column():
+                    # 学習情報を送信するボタンを配置
+                    train_data_submit_btn = gr.Button("5. Submit training data")
+            
+                    # 学習を開始するボタンを配置
+                    # 全ての設定が完了次第、反応するようにしたい
+                    train_start_btn = gr.Button("6. Start training", variant="primary")
 
+                with gr.Column():
                     # 学習済みのモデル名を入力するテキストボックスを配置
                     trained_model_name_text = gr.Textbox(label="Trained model name", lines=2, interactive=False, show_copy_button=True)
                 
@@ -347,8 +350,6 @@ class ChatBotGradioUi():
             
             elif train_type_choice == "instruction-tuning":
                 self.train_method = InstructionFineTuning()
-
-                print(prompt_format_choice)
 
                 # 学習に使用するpromptの情報を設定
                 self.prompt_format = PromptInstructionTuningModel(

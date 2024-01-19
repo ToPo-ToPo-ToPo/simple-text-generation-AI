@@ -9,6 +9,7 @@ DATASETS_DICT = {
     ],
     "instruction-tuning": [
         "kunishou/databricks-dolly-15k-ja",
+        "ToPo-ToPo/databricks-dolly-15k-ja-zundamon",
         "ToPo-ToPo/databricks-dolly-15k-ja-nanoja",
         "ToPo-ToPo/oasst1-89k-ja"
     ],
