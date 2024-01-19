@@ -49,8 +49,8 @@ class InstructionFineTuning:
         #print(dataset)
         #print(dataset["train"][0])
     
-        # データセットをinputが空の要素のみ5000個でフィルタリング
-        train_dataset = dataset["train"].filter(lambda data: data["input"] == "").select(range(10000))
+        # データセットをinputが空の要素のみでフィルタリング
+        train_dataset = dataset["train"].filter(lambda data: data["input"] == "")
 
         # 確認
         #print(train_dataset)
