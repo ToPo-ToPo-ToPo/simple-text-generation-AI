@@ -391,7 +391,7 @@ class ChatBotGradioUi():
             model_name = self.llm.name.replace('../models/', '')
             model_name = model_name.replace('/', '-')
             dataset_name = datasets_choice.replace('/', '-')
-            self.trained_model_name = model_name + "-" + dataset_name + "-" + train_method_choice + "-" + train_type_choice + "-" + "model"
+            self.trained_model_name = model_name + "-" + dataset_name + "-" + train_method_choice + "-" + train_type_choice
             yield gr.Textbox(visible=True, value=self.train_info), gr.Textbox(visible=True, value=self.trained_model_name)
     
     #-----------------------------------------------------------
