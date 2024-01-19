@@ -59,8 +59,6 @@ class PromptInstructionTuningModel:
         # 前置き(input)がある場合
         else:
             prompt = f"{self.input_tag} {input}{self.new_line_tag}{self.user_tag} {question}{self.new_line_tag}{self.system_tag} "
-        
-        print(prompt)
 
         return prompt
     
