@@ -1,3 +1,4 @@
+import time
 import torch
 import gradio as gr
 from llm.model_factory import ModelFactory
@@ -7,6 +8,7 @@ from llm.prompt import PromptInstructionTuningModel
 from configure.model_config import MODEL_DICT
 from configure.load_bit_size_config import LOAD_BIT_SIZE_DICT
 from configure.training_config import DATASETS_DICT
+from configure.prompt_config import PROMPT_DICT
 #======================================================================
 # UIの基本クラス
 #======================================================================
@@ -253,13 +255,16 @@ class ChatBotGradioUi():
                       
                     # 学習用のデータセットの種類を選択
                     datasets_choice = gr.Dropdown(label="3. Datasets", choices=[], value=None)
+
+                    # 学習時に使用するプロンプトの種類を選択
+                    prompt_format_choice = gr.Dropdown(label="4. Prompt format for the training", choices=list(PROMPT_DICT.keys()), value=None)
                     
                     # 学習情報を送信するボタンを配置
-                    train_data_submit_btn = gr.Button("4. Train data submit")
+                    train_data_submit_btn = gr.Button("5. Train data submit")
             
                     # 学習を開始するボタンを配置
                     # 全ての設定が完了次第、反応するようにしたい
-                    train_start_btn = gr.Button("5. Training Start", variant="primary")
+                    train_start_btn = gr.Button("6. Training Start", variant="primary")
 
                 with gr.Column():
                     # 初期状態のテキストボックスを配置
@@ -270,7 +275,19 @@ class ChatBotGradioUi():
                 
             
         #　送信ボタンクリック時の動作を設定
-        train_data_submit_btn.click(fn=self.set_train_condition, inputs=[datasets_choice, train_type_choice, train_method_choice], outputs=[model_info_text, trained_model_name_text])
+        train_data_submit_btn.click(
+            fn=self.set_train_condition, 
+            inputs=[
+                train_method_choice, 
+                train_type_choice, 
+                datasets_choice, 
+                prompt_format_choice
+            ], 
+            outputs=[
+                model_info_text, 
+                trained_model_name_text
+            ]
+        )
         
         #　送信ボタンクリック時の動作を設定
         train_start_btn.click(fn=self.training, inputs=[trained_model_name_text], outputs=model_info_text)
@@ -289,7 +306,7 @@ class ChatBotGradioUi():
     #-----------------------------------------------------------
     # 使用するモデルの登録
     #-----------------------------------------------------------
-    def set_train_condition(self, datasets_choice, train_type_choice, train_method_choice):
+    def set_train_condition(self, train_method_choice, train_type_choice, datasets_choice, prompt_format_choice):
         
         # 学習方法を設定
         # フルファインチューニングの場合
@@ -301,14 +318,15 @@ class ChatBotGradioUi():
             elif train_type_choice == "instruction-tuning":
                 self.train_method = InstructionFineTuning()
 
+                print(prompt_format_choice)
+
                 # 学習に使用するpromptの情報を設定
-                # 学習に使用するModelがinstruction tuning modelの場合、元のモデルに合わせる
-                if type(self.llm.prompt_format) is PromptInstructionTuningModel:
-                    self.prompt_format = self.llm.prompt_format
-                
-                # ベースモデルの場合は、プログラムデフォルトの設定で学習する
-                else:
-                    self.prompt_format = PromptInstructionTuningModel(user_tag="ユーザー:", system_tag="システム:")
+                self.prompt_format = PromptInstructionTuningModel(
+                    user_tag=PROMPT_DICT[prompt_format_choice]["user_tag"], 
+                    system_tag=PROMPT_DICT[prompt_format_choice]["system_tag"],
+                    new_line_tag=PROMPT_DICT[prompt_format_choice]["new_line_tag"],
+                    end_of_string=PROMPT_DICT[prompt_format_choice]["end_of_string"]
+                )
 
             else:
                 raise gr.Error("The type of training is not set!")

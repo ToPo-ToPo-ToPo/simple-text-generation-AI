@@ -3,7 +3,7 @@ from llm.rinna_instruction_tuning_model import RinnaInstructionTuningModel
 from llm.line_instruction_tuning_model import LineInstructionTuningModel
 from llm.cyberagent_base_model import CyberagentBaseModel
 from llm.cyberagent_instruction_tuning_model import CyberagentInstructionTuningModel
-from llm.prompt import PromptInstructionTuningModel
+from llm.original_instruction_tuning_model import OriginalInstructionTuningModel
 #====================================================================
 # 各種LLMを生成するクラス
 #====================================================================
@@ -57,6 +57,16 @@ class ModelFactory:
                 load_in_8bit=load_in_8bit, 
                 load_in_4bit=load_in_4bit, 
                 llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload
+            )
+        
+        elif model_group == "original-instruction-model":
+            return OriginalInstructionTuningModel(
+                model_name=model_name,
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit, 
+                #llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload
             )
         
         else:

@@ -20,6 +20,6 @@ MODEL_DICT = {
     ],
     "cyberagent-instruction-model": [
         "cyberagent/calm2-7b-chat",
-        "../models/open-calm-small-databricks-dolly-15k-ja-sft-v2" 
+        "../models/cyberagent-open-calm-small-kunishou-databricks-dolly-15k-ja-full-instruction-tuning-model", 
     ],
 }
