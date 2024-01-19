@@ -10,6 +10,9 @@ MODEL_DICT = {
         "rinna/japanese-gpt-neox-3.6b-instruction-sft-v2",
         "rinna/japanese-gpt-neox-3.6b-instruction-sft",
     ],
+    "line-corporation-base-model": [
+        "line-corporation/japanese-large-lm-1.7b",
+    ],
     "line-corporation-instruction-model": [
         "line-corporation/japanese-large-lm-3.6b-instruction-sft",
         "line-corporation/japanese-large-lm-3.6b-instruction-sft-4bit-128g-actorder_False",

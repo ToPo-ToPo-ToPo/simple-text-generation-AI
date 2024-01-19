@@ -1,5 +1,6 @@
 
 from llm.rinna_instruction_tuning_model import RinnaInstructionTuningModel
+from llm.line_base_model import LineBaseModel
 from llm.line_instruction_tuning_model import LineInstructionTuningModel
 from llm.cyberagent_base_model import CyberagentBaseModel
 from llm.cyberagent_instruction_tuning_model import CyberagentInstructionTuningModel
@@ -22,6 +23,15 @@ class ModelFactory:
         # 入力されたmodel名からLLMを作成する
         if model_group == "rinna-instruction-model":
             return RinnaInstructionTuningModel(
+                model_name=model_name,
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit
+            )
+        
+        elif model_group == "line-corporation-base-model":
+            return LineBaseModel(
                 model_name=model_name,
                 processor=processor, 
                 load_bit_size=load_bit_size, 
