@@ -1,5 +1,7 @@
 accelerate==0.26.1
 aiofiles==23.2.1
+aiohttp==3.9.1
+aiosignal==1.3.1
 altair==5.2.0
 annotated-types==0.6.0
 anyio==4.2.0
@@ -11,11 +13,15 @@ click==8.1.7
 colorama==0.4.6
 contourpy==1.2.0
 cycler==0.12.1
+datasets==2.16.1
+dill==0.3.7
+docstring-parser==0.15
 fastapi==0.109.0
 ffmpy==0.3.1
 filelock==3.9.0
 fonttools==4.47.2
-fsspec==2023.12.2
+frozenlist==1.4.1
+fsspec==2023.10.0
 gradio==4.14.0
 gradio_client==0.8.0
 h11==0.14.0
@@ -33,6 +39,8 @@ MarkupSafe==2.1.3
 matplotlib==3.8.2
 mdurl==0.1.2
 mpmath==1.3.0
+multidict==6.0.4
+multiprocess==0.70.15
 networkx==3.0
 numpy==1.24.1
 orjson==3.9.10
@@ -40,6 +48,8 @@ packaging==23.2
 pandas==2.1.4
 Pillow==9.3.0
 psutil==5.9.7
+pyarrow==14.0.2
+pyarrow-hotfix==0.6
 pydantic==2.5.3
 pydantic_core==2.14.6
 pydub==0.25.1
@@ -59,6 +69,7 @@ scipy==1.11.4
 semantic-version==2.10.0
 sentencepiece==0.1.99
 shellingham==1.5.4
+shtab==1.6.5
 six==1.16.0
 sniffio==1.3.0
 starlette==0.35.1
@@ -71,9 +82,13 @@ torchaudio==2.1.2+cu118
 torchvision==0.16.2+cu118
 tqdm==4.66.1
 transformers==4.36.2
+trl==0.7.10
 typer==0.9.0
 typing_extensions==4.9.0
+tyro==0.6.6
 tzdata==2023.4
 urllib3==1.26.13
 uvicorn==0.25.0
 websockets==11.0.3
+xxhash==3.4.1
+yarl==1.9.4

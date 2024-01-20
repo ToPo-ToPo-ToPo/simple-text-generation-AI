@@ -14,6 +14,7 @@ MODEL_DICT = {
         "line-corporation/japanese-large-lm-1.7b",
     ],
     "line-corporation-instruction-model": [
+        "ToPo-ToPo/line-japanese-large-lm-1.7b-kunishou-databricks-dolly-15k-ja-full-instruction-sft",
         "line-corporation/japanese-large-lm-3.6b-instruction-sft",
         "line-corporation/japanese-large-lm-3.6b-instruction-sft-4bit-128g-actorder_False",
         "my-lora-aituber-model-based-line-3.6b-sft-v2",
