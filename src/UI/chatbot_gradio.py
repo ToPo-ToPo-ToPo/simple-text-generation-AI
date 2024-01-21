@@ -2,8 +2,9 @@ import time
 import torch
 import gradio as gr
 from llm.model_factory import ModelFactory
-from training.fine_tuning import FineTuning
-from training.instruction_fine_tuning import InstructionFineTuning
+from training.additional_sft import AdditionalSft
+from training.instruction_sft import InstructionSft
+from training.instruction_sft_lora import InstructionSftLoRA
 from llm.prompt import PromptInstructionTuningModel
 from configure.model_config import MODEL_DICT
 from configure.load_bit_size_config import LOAD_BIT_SIZE_DICT
@@ -346,10 +347,10 @@ class ChatBotGradioUi():
         if train_method_choice == "full":
             
             if train_type_choice == "base-tuning":
-                self.train_method = FineTuning()
+                self.train_method = AdditionalSft()
             
             elif train_type_choice == "instruction-tuning":
-                self.train_method = InstructionFineTuning()
+                self.train_method = InstructionSft()
 
                 # 学習に使用するpromptの情報を設定
                 self.prompt_format = PromptInstructionTuningModel(

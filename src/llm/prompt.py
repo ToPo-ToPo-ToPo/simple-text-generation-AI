@@ -83,3 +83,10 @@ class PromptInstructionTuningModel:
             output_texts.append(text)
             
         return output_texts
+    
+    #----------------------------------------------------------
+    # 返答のプロンプトの設定
+    #----------------------------------------------------------
+    def response_template(self):
+        
+        return f"{self.system_tag}"
