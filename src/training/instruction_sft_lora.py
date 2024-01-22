@@ -1,5 +1,5 @@
 
-from transformers import Trainer, TrainingArguments, DataCollatorForLanguageModeling
+from transformers import TrainingArguments
 from datasets import load_dataset
 from peft import LoraConfig, TaskType
 from trl import SFTTrainer
@@ -30,12 +30,25 @@ class InstructionSftLoRA:
         )
         
         return lora_config
+    
+    #----------------------------------------------------------
+    # トレーニングデータを作成する
+    #----------------------------------------------------------
+    def create_train_dataset(self, dataset_name, VAL_SET_SIZE=4000):
+        
+        # データセットの準備
+        dataset = load_dataset(dataset_name)
+        
+        # 学習データと検証データの準備
+        train_dataset = dataset["train"].filter(lambda data: data["input"] == "")
+        
+        return train_dataset
 
     #-------------------------------------------------------------
-    # トレーナーの準備 
+    # 学習の実行
     #-------------------------------------------------------------
-    def set_trainer(self, tokenizer, model, prompt_format, train_dataset):
-        
+    def training(self, tokenizer, model, prompt_format, train_dataset, NUM_TRAIN_EPOCHS=3, VAL_SET_SIZE=4000):
+
         args = TrainingArguments(
             output_dir="../temp/train_log",
             num_train_epochs=2,
@@ -50,66 +63,26 @@ class InstructionSftLoRA:
         
         collator = DataCollatorForCompletionOnlyLM(
             response_template=prompt_format.response_template(), 
-            tokenizer=tokenizer)
+            tokenizer=tokenizer
+        )
 
         trainer = SFTTrainer(
             model,
             args=args,
             train_dataset=train_dataset,
-            formatting_func=prompt_format.formatting_prompts_func(),
+            formatting_func=prompt_format.formatting_training_prompts_func,
             max_seq_length=128,
             data_collator=collator,
             peft_config=self.set_lora_config(),
-        )
-
-        return trainer
-    
-    #----------------------------------------------------------
-    # トレーニングデータを作成する
-    #----------------------------------------------------------
-    def create_train_dataset(self, llm, prompt_format, dataset_name, VAL_SET_SIZE=4000):
-        
-        # データセットの準備
-        dataset = load_dataset(dataset_name)
-        
-        # 学習データと検証データの準備
-        train_dataset = dataset["train"].filter(lambda data: data["input"] == "")
-        
-        """train_val = data["train"].train_test_split(test_size=VAL_SET_SIZE, shuffle=True, seed=42)
-        train_data = train_val["train"]
-        val_data = train_val["test"]
-        train_data = train_data.shuffle().map(lambda x: llm.tokenize(prompt_format.formatting_training_prompts_func(x), llm.tokenizer))
-        val_data = val_data.shuffle().map(lambda x: llm.tokenize(prompt_format.formatting_training_prompts_func(x), llm.tokenizer))
-        
-        # 学習用と評価用のデータセットを作成
-        train_dataset = TrainDatasetLoRA(
-            train_data=train_data, 
-            val_data=val_data
-        )"""
-        
-        return train_dataset
-
-    #-------------------------------------------------------------
-    # 学習の実行
-    #-------------------------------------------------------------
-    def training(self, tokenizer, model, prompt_format, train_dataset, NUM_TRAIN_EPOCHS=3, VAL_SET_SIZE=4000):
-
-        # トレーナーの準備
-        trainer = self.set_trainer(
-            tokenizer=tokenizer,
-            model=model,
-            train_data=train_dataset.train_data,
-            val_data=train_dataset.val_data,
-            NUM_TRAIN_EPOCHS=NUM_TRAIN_EPOCHS
         )
 
         # 学習の実行
         model.config.use_cache = False
         trainer.train() 
         model.config.use_cache = True
-
-        # LoRAモデルの保存
-        #trainer.model.save_pretrained(peft_name)
+        
+        return trainer
+        
 
 #===============================================================================
 # 学習データのセット

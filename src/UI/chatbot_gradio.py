@@ -346,10 +346,10 @@ class ChatBotGradioUi():
         # フルファインチューニングの場合
         if train_method_choice == "full":
             
-            if train_type_choice == "base-tuning":
+            if train_type_choice == "additional_sft":
                 self.train_method = AdditionalSft()
             
-            elif train_type_choice == "instruction-tuning":
+            elif train_type_choice == "instruction-sft":
                 self.train_method = InstructionSft()
 
                 # 学習に使用するpromptの情報を設定
@@ -365,7 +365,15 @@ class ChatBotGradioUi():
         
         # LoRAチューニングの場合
         elif train_method_choice == "LoRA":
-            raise gr.Error("LoRA has not yet been implemented!")
+            self.train_method = InstructionSftLoRA()
+            
+            # 学習に使用するpromptの情報を設定
+            self.prompt_format = PromptInstructionTuningModel(
+                user_tag=PROMPT_DICT[prompt_format_choice]["user_tag"], 
+                system_tag=PROMPT_DICT[prompt_format_choice]["system_tag"],
+                new_line_tag=PROMPT_DICT[prompt_format_choice]["new_line_tag"],
+                end_of_string=PROMPT_DICT[prompt_format_choice]["end_of_string"]
+            )    
         
         else:
             raise gr.Error("Training method is not set!")

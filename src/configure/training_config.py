@@ -4,7 +4,7 @@
 # 辞書型 {group1: [name1, name2, ...], group2: [name1, name2, ...]}
 #======================================================================
 DATASETS_DICT = {
-    "sft": [
+    "additional-sft": [
         "tyqiangz/multilingual-sentiments", 
     ],
     "instruction-sft": [

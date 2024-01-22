@@ -49,7 +49,7 @@ class AdditionalSft:
         #print(dataset)
         #print(dataset["train"][0])
     
-        # データセットをpositiveのみ5000個でフィルタリング
+        # データセットをpositiveのみでフィルタリング
         train_dataset = dataset["train"].filter(lambda data: data["label"] == 0).select(range(5000))
 
         # 確認
