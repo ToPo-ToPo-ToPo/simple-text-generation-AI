@@ -7,6 +7,7 @@
 MODEL_DICT = {
     "rinna-base-model":
     [
+        "rinna/japanese-gpt2-small",
         "rinna/japanese-gpt-neox-3.6b",
     ],
     "rinna-instruction-model": [
