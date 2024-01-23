@@ -1,7 +1,7 @@
 
 from transformers import TrainingArguments
 from datasets import load_dataset
-from peft import LoraConfig, TaskType
+from peft import LoraConfig, TaskType, prepare_model_for_int8_training
 from trl import SFTTrainer
 from trl import DataCollatorForCompletionOnlyLM
 #===============================================================================
@@ -49,6 +49,9 @@ class InstructionSftLoRA:
     #-------------------------------------------------------------
     def training(self, tokenizer, model, prompt_format, train_dataset, NUM_TRAIN_EPOCHS=3, VAL_SET_SIZE=4000):
 
+        # モデルの前処理 8bit in load
+        #model = prepare_model_for_int8_training(model)
+
         args = TrainingArguments(
             output_dir="../temp/train_log",
             num_train_epochs=2,
@@ -71,7 +74,7 @@ class InstructionSftLoRA:
             args=args,
             train_dataset=train_dataset,
             formatting_func=prompt_format.formatting_training_prompts_func,
-            max_seq_length=128,
+            max_seq_length=512,
             data_collator=collator,
             peft_config=self.set_lora_config(),
         )

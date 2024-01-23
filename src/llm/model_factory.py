@@ -1,4 +1,5 @@
 
+from llm.rinna_base_model import RinnaBaseModel
 from llm.rinna_instruction_tuning_model import RinnaInstructionTuningModel
 from llm.line_base_model import LineBaseModel
 from llm.line_instruction_tuning_model import LineInstructionTuningModel
@@ -21,7 +22,16 @@ class ModelFactory:
     def create(self, model_group, model_name, processor, load_bit_size, load_in_8bit=False, load_in_4bit=False, llm_int8_enable_fp32_cpu_offload=False):
         
         # 入力されたmodel名からLLMを作成する
-        if model_group == "rinna-instruction-model":
+        if model_group == "rinna-base-model":
+            return RinnaBaseModel(
+                model_name=model_name,
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit
+            )
+        
+        elif model_group == "rinna-instruction-model":
             return RinnaInstructionTuningModel(
                 model_name=model_name,
                 processor=processor, 
