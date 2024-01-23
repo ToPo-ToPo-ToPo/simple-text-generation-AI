@@ -50,7 +50,8 @@ class InstructionSftLoRA:
     def training(self, tokenizer, model, prompt_format, train_dataset, NUM_TRAIN_EPOCHS=3, VAL_SET_SIZE=4000):
 
         # モデルの前処理 8bit in load
-        model = prepare_model_for_int8_training(model)
+        #if model.load_in_8bit() == True:
+        #    model = prepare_model_for_int8_training(model)
 
         args = TrainingArguments(
             output_dir="../temp/train_log",
