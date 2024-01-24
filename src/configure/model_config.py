@@ -21,6 +21,7 @@ MODEL_DICT = {
 
     ],
     "line-corporation-instruction-model": [
+        "line-corporation/japanese-large-lm-1.7b-instruction-sft",
         "ToPo-ToPo/line-japanese-large-lm-1.7b-kunishou-databricks-dolly-15k-ja-full-instruction-sft",
         "line-corporation/japanese-large-lm-3.6b-instruction-sft",
         "line-corporation/japanese-large-lm-3.6b-instruction-sft-4bit-128g-actorder_False",
@@ -31,7 +32,6 @@ MODEL_DICT = {
     ],
     "cyberagent-instruction-model": [
         "cyberagent/calm2-7b-chat",
-        "ToPo-ToPo/cyberagent-open-calm-small-ToPo-ToPo-databricks-dolly-15k-ja-zundamon-full-instruction-tuning",
         "ToPo-ToPo/cyberagent-open-calm-small-kunishou-databricks-dolly-15k-ja-full-instruction-tuning",
         "ToPo-ToPo/cyberagent-open-calm-small-kunishou-databricks-dolly-15k-ja-LoRA-instruction-sft",
     ],
