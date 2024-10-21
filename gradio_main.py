@@ -1,10 +1,10 @@
 
 import sys
-sys.path.append('../src/')
+sys.path.append('src/')
 
 # モデルのキャッシュパスの変更
 import os
-os.environ['HF_HOME'] = '../cache/'
+os.environ['HF_HOME'] = 'cache/'
 
 from UI.chatbot_gradio import ChatBotGradioUi
 #======================================================================
