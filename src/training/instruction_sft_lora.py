@@ -1,7 +1,7 @@
 
 from transformers import TrainingArguments
 from datasets import load_dataset
-from peft import LoraConfig, TaskType, prepare_model_for_int8_training
+from peft import LoraConfig, TaskType, prepare_model_for_kbit_training
 from trl import SFTTrainer
 from trl import DataCollatorForCompletionOnlyLM
 #===============================================================================
