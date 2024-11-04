@@ -5,6 +5,7 @@ from llm.line_base_model import LineBaseModel
 from llm.line_instruction_tuning_model import LineInstructionTuningModel
 from llm.cyberagent_base_model import CyberagentBaseModel
 from llm.cyberagent_instruction_tuning_model import CyberagentInstructionTuningModel
+from llm.rinna.gemma_2_baku_it_model import Gemma2BakuInstructionModel
 #====================================================================
 # 各種LLMを生成するクラス
 #====================================================================
@@ -76,6 +77,15 @@ class ModelFactory:
                 load_in_8bit=load_in_8bit, 
                 load_in_4bit=load_in_4bit, 
                 llm_int8_enable_fp32_cpu_offload=llm_int8_enable_fp32_cpu_offload
+            )
+        
+        elif model_group == "gemma-2-instruction-model":
+            return Gemma2BakuInstructionModel(
+                model_name=model_name,
+                processor=processor, 
+                load_bit_size=load_bit_size, 
+                load_in_8bit=load_in_8bit, 
+                load_in_4bit=load_in_4bit,
             )
         
         else:

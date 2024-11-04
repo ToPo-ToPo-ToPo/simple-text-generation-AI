@@ -35,4 +35,7 @@ MODEL_DICT = {
         "ToPo-ToPo/cyberagent-open-calm-small-kunishou-databricks-dolly-15k-ja-full-instruction-tuning",
         "ToPo-ToPo/cyberagent-open-calm-small-kunishou-databricks-dolly-15k-ja-LoRA-instruction-sft",
     ],
+    "gemma-2-instruction-model": [
+        "rinna/gemma-2-baku-2b-it",
+    ],
 }

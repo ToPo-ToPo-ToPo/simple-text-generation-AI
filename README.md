@@ -21,7 +21,7 @@ python -m venv env
 ```
 - Macの場合は、以下から仮想環境を起動します。
 ```
-source .\env\Scripts\activate
+source ./env/bin/activate 
 ```
 
 ## パッケージのインストール
@@ -42,9 +42,20 @@ pip install trl
 pip install peft 
 ```
 ### Macの場合
-以下を実行してください。
+以下を実行してください。ただし、Macではcudaを使用できないためPytorchはデフォルト版をインストールします。
+コマンドは[公式サイト](https://pytorch.org/get-started/locally/)から確認できます。
 ```
-pip install -r requirements_apple_silicon.txt
+pip install transformers
+pip3 install torch torchvision torchaudio
+pip install ctranslate2
+pip install langchain
+pip install flask
+pip install sentencepiece
+pip install gradio 
+pip install bitsandbytes
+pip install datasets
+pip install trl
+pip install peft
 ```
 
 ## 使用方法
